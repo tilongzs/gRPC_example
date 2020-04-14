@@ -45,8 +45,8 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 	auto GetFileString = [&](string extraFilePath)
 	{
 		char buf[MAX_PATH] = { 0 };
-		GetModuleFileNameA(NULL, buf, MAX_PATH * sizeof(WCHAR));
-		GetLongPathNameA(buf, buf, MAX_PATH * sizeof(WCHAR));
+		GetModuleFileNameA(NULL, buf, MAX_PATH * sizeof(char));
+		GetLongPathNameA(buf, buf, MAX_PATH * sizeof(char));
 		PathRemoveFileSpecA(buf);
 		PathAppendA(buf, extraFilePath.c_str());
 
