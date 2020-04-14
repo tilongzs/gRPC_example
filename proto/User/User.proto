@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package TestGRPC;
+
+service UserService{
+// 根据用户名获取用户信息
+ rpc GetUser(UserAccountName) returns (User){} 
+
+ // 获取指定角色的所有用户信息
+ rpc GetUsersByRole(UserRole) returns (stream User){}
+
+ // 批量增加新用户，返回服务器用户总数
+ rpc AddUsers(stream User) returns (CommonCount){}
+
+ // 批量删除用户，返回删除成功的用户名
+ rpc DeleteUsers(stream UserAccountName) returns (stream UserAccountName){}
+}
+
+// 用户信息
+message User{
+	string accountName = 1;	// 用户名（英文、数字、下划线、@）
+	string accountPWD = 2;	// 密码
+	string nickName = 3;	// 昵称
+	uint32 age = 4;
+	Role userRole = 5;  // 用户角色
+}
+
+// 角色
+enum Role{
+    USER    = 0;
+    ADMIN   = 1;
+}
+
+// 用户角色
+message UserRole{
+    Role role = 1;
+}
+
+// 用户名
+message UserAccountName{
+    string accountName = 1;	// 用户名（英文、数字、下划线、@）
+}
+
+// 服务器用户总数
+message CommonCount{
+    uint32 count= 1;
+}
+
