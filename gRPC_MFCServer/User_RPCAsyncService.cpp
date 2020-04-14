@@ -6,6 +6,7 @@
 #include <pplx/pplxtasks.h>
 #include <chrono>
 #include <sstream>
+#include <fstream>
 using namespace Concurrency;
 using namespace chrono;
 
@@ -38,9 +39,31 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 		return;
 	}
 
-	// 监听不需要认证的连接
 	_builder = make_unique<ServerBuilder>();
-	_builder->AddListeningPort(serverAddr, grpc::InsecureServerCredentials());
+	_builder->AddListeningPort(serverAddr, grpc::InsecureServerCredentials());// 监听不需要认证的连接
+
+	auto GetFileString = [&](string extraFilePath)
+	{
+		char buf[MAX_PATH] = { 0 };
+		GetModuleFileNameA(NULL, buf, MAX_PATH * sizeof(WCHAR));
+		GetLongPathNameA(buf, buf, MAX_PATH * sizeof(WCHAR));
+		PathRemoveFileSpecA(buf);
+		PathAppendA(buf, extraFilePath.c_str());
+
+		ifstream in(buf);
+		istreambuf_iterator<char> beg(in), end;
+		string str(beg, end);
+		return str;
+	};
+
+	// 增加SSL验证
+// 	grpc::SslServerCredentialsOptions sslOpts{};
+// 	sslOpts.client_certificate_request = GRPC_SSL_REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY;
+// 	sslOpts.pem_key_cert_pairs.push_back(grpc::SslServerCredentialsOptions::PemKeyCertPair{ GetFileString("ssl/server.key"), GetFileString("ssl/server.crt") });
+// 	sslOpts.pem_root_certs = GetFileString("ssl/client.crt");
+// 	auto creds = grpc::SslServerCredentials(sslOpts);
+// 	_builder->AddListeningPort(serverAddr, creds);
+
 	// 注册服务
 	_asyncUserService = make_unique<UserService::AsyncService>();
 	_builder->RegisterService(_asyncUserService.get());

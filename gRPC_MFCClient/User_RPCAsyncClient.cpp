@@ -4,6 +4,7 @@
 #include <pplx/pplxtasks.h>
 #include <chrono>
 #include <sstream>
+#include <fstream>
 using namespace Concurrency;
 using namespace std::chrono;
 
@@ -26,8 +27,30 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 {
 	_mainDlg = mainDlg;
 
-	// 创建gRPC channel，监听不需要认证的连接
-	_channel = grpc::CreateChannel(serverAddr, grpc::InsecureChannelCredentials());
+	auto GetFileString = [&](string extraFilePath)
+	{
+		char buf[MAX_PATH] = { 0 };
+		GetModuleFileNameA(NULL, buf, MAX_PATH * sizeof(WCHAR));
+		GetLongPathNameA(buf, buf, MAX_PATH * sizeof(WCHAR));
+		PathRemoveFileSpecA(buf);
+		PathAppendA(buf, extraFilePath.c_str());
+
+		ifstream in(buf);
+		istreambuf_iterator<char> beg(in), end;
+		string str(beg, end);
+		return str;
+	};
+
+	// 创建gRPC channel
+	_channel = grpc::CreateChannel(serverAddr, grpc::InsecureChannelCredentials()); // 监听不需要认证的连接
+	// 增加SSL验证
+// 	grpc::SslCredentialsOptions sslOpts;
+// 	sslOpts.pem_root_certs = GetFileString("ssl/server.crt");
+// 	sslOpts.pem_private_key = GetFileString("ssl/client.key");
+// 	sslOpts.pem_cert_chain = GetFileString("ssl/client.crt");
+// 	auto creds = grpc::SslCredentials(sslOpts);
+// 	_channel = grpc::CreateChannel(serverAddr, creds);
+
 	_stub = UserService::NewStub(_channel);
 
 	task<void> taskProceed([&]
