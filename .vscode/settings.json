@@ -1,0 +1,11 @@
+{
+    "protoc": {
+        "path": "D:\\SoftwareDevelopment\\vcpkg\\installed\\x64-windows\\tools\\protobuf\\protoc.exe",
+        "options": [
+            "--proto_path=${workspaceRoot}",
+            "--cpp_out=.",
+            "--grpc_out=.",
+            "--plugin=protoc-gen-grpc=D:\\SoftwareDevelopment\\vcpkg\\installed\\x64-windows\\tools\\grpc\\grpc_cpp_plugin.exe", 
+        ]
+    }
+}
