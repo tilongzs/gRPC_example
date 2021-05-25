@@ -72,7 +72,7 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 	{
 		// 添加队列（必须在BuildAndStart之前）
 		ServerCompletionQueue* cqNotification = _builder->AddCompletionQueue().release();
-		_vecCQ.push_back(cqNotification);
+		_vecSCQ.push_back(cqNotification);
 
 		threadCount--;
 	}
@@ -82,25 +82,25 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 
 	// 服务运行
 	auto token = _ctsCommon->get_token();
-	for each (auto cq in _vecCQ)
+	for each (auto scq in _vecSCQ)
 	{
 		CompletionQueue* cqNewCall = new CompletionQueue;
 		_vecCQNewCall.push_back(cqNewCall);
 
 		// 创建应答器对象
-		new CAsyncRPCResponder_GetUser(_asyncUserService.get(), cqNewCall, cq, this);
-		new CAsyncRPCResponder_GetUsersByRole(_asyncUserService.get(), cqNewCall, cq, this);
-		new CAsyncRPCResponder_AddUsers(_asyncUserService.get(), cqNewCall, cq, this);
-		new CAsyncRPCResponder_DeleteUsers(_asyncUserService.get(), cqNewCall, cq, this);
+		new CAsyncRPCResponder_GetUser(_asyncUserService.get(), cqNewCall, scq, this);
+		new CAsyncRPCResponder_GetUsersByRole(_asyncUserService.get(), cqNewCall, scq, this);
+		new CAsyncRPCResponder_AddUsers(_asyncUserService.get(), cqNewCall, scq, this);
+		new CAsyncRPCResponder_DeleteUsers(_asyncUserService.get(), cqNewCall, scq, this);
 
-		task<void> taskProceed([&, cq, token]
+		task<void> taskProceed([&, scq, token]
 		{
 			ostringstream str;
 			void* tag = nullptr;
 			bool ok = false;
 			while (!token.is_canceled())
 			{
-				if (!cq->Next(&tag, &ok)) // 阻塞，直至有新的事件
+				if (!scq->Next(&tag, &ok)) // 阻塞，直至有新的事件
 				{
 					// 出现错误，服务停止
 					str.clear();
@@ -114,8 +114,8 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 				static_cast<CAsyncRPCResponder*>(tag)->OnNotification(ok);
 			}
 
-			cq->Shutdown();
-			delete cq;
+			scq->Shutdown();
+			delete scq;
 
 			str.clear();
 			str << GetTimeStr() << "CUser_RPCAsyncService::RunServer() taskEnd" << endl;
@@ -162,7 +162,7 @@ void CAsyncRPCService::Shutdown()
 
 	_rpcServer->Shutdown();
 
-	for each (auto iter in _vecCQ)
+	for each (auto iter in _vecSCQ)
 	{
 		iter->Shutdown();
 	}
@@ -180,7 +180,7 @@ void CAsyncRPCService::Shutdown()
 CAsyncRPCResponder_GetUser::CAsyncRPCResponder_GetUser(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService)
 	: CAsyncRPCResponder(service, cqNewCall, cqNotification, dataService), _responder(&_ctx)
 {
-	_asyncService->RequestGetUser(&_ctx, &_rqUserAccountName, &_responder, _cqNewCall, _cqNotification, this);
+	_svcUser->RequestGetUser(&_ctx, &_rqUserAccountName, &_responder, _cqNewCall, _scqNotification, this);
 }
 
 void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
@@ -195,7 +195,7 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 			if (!_isNewResponderCreated)
 			{
 				_isNewResponderCreated = true;
-				new CAsyncRPCResponder_GetUser(_asyncService, _cqNewCall, _cqNotification, _dataService);
+				new CAsyncRPCResponder_GetUser(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
 			// 处理数据
@@ -248,7 +248,7 @@ void CAsyncRPCResponder_GetUser::OnNewCall(bool isOK)
 CAsyncRPCResponder_GetUsersByRole::CAsyncRPCResponder_GetUsersByRole(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService)
 	: CAsyncRPCResponder(service, cqNewCall, cqNotification, dataService), _responder(&_ctx)
 {
-	_asyncService->RequestGetUsersByRole(&_ctx, &_rqUserRole, &_responder, _cqNewCall, _cqNotification, this);
+	_svcUser->RequestGetUsersByRole(&_ctx, &_rqUserRole, &_responder, _cqNewCall, _scqNotification, this);
 }
 
 void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
@@ -263,7 +263,7 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 			if (!_isNewResponderCreated)
 			{
 				_isNewResponderCreated = true;
-				new CAsyncRPCResponder_GetUsersByRole(_asyncService, _cqNewCall, _cqNotification, _dataService);
+				new CAsyncRPCResponder_GetUsersByRole(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
 			Process();
@@ -358,7 +358,7 @@ void CAsyncRPCResponder_GetUsersByRole::Process()
 CAsyncRPCResponder_AddUsers::CAsyncRPCResponder_AddUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService)
 	: CAsyncRPCResponder(service, cqNewCall, cqNotification, dataService), _requester(&_ctx)
 {
-	_asyncService->RequestAddUsers(&_ctx, &_requester, _cqNewCall, _cqNotification, this);
+	_svcUser->RequestAddUsers(&_ctx, &_requester, _cqNewCall, _scqNotification, this);
 }
 
 void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
@@ -373,7 +373,7 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 			if (!_isNewResponderCreated)
 			{
 				_isNewResponderCreated = true;
-				new CAsyncRPCResponder_AddUsers(_asyncService, _cqNewCall, _cqNotification, _dataService);
+				new CAsyncRPCResponder_AddUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
 			// 第一次等待数据
@@ -443,7 +443,7 @@ void CAsyncRPCResponder_AddUsers::OnNewCall(bool isOK)
 CAsyncRPCResponder_DeleteUsers::CAsyncRPCResponder_DeleteUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService)
 	: CAsyncRPCResponder(service, cqNewCall, cqNotification, dataService), _requester(&_ctx)
 {
-	_asyncService->RequestDeleteUsers(&_ctx, &_requester, _cqNewCall, _cqNotification, this);
+	_svcUser->RequestDeleteUsers(&_ctx, &_requester, _cqNewCall, _scqNotification, this);
 }
 
 void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
@@ -459,7 +459,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 			if (!_isNewResponderCreated)
 			{
 				_isNewResponderCreated = true;
-				new CAsyncRPCResponder_DeleteUsers(_asyncService, _cqNewCall, _cqNotification, _dataService);
+				new CAsyncRPCResponder_DeleteUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
 			// 第一次等待数据
@@ -501,7 +501,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNewCall(bool isOK)
 					users.erase(_tmpAccountName.accountname());
 
 					// 保存删除的用户名
-					_rp_accountNames.push_back(move(_tmpAccountName));
+					_rp_accountNames.push_back(move(_tmpAccountName));				
 				}
 
 				// 继续等待数据

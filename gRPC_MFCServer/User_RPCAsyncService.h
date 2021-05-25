@@ -24,7 +24,7 @@ private:
 	unique_ptr<ServerBuilder> _builder = nullptr;
 	unique_ptr<UserService::AsyncService> _asyncUserService = nullptr;
 	unique_ptr<cancellation_token_source> _ctsCommon = make_unique<cancellation_token_source>();
-	vector<ServerCompletionQueue*> _vecCQ;
+	vector<ServerCompletionQueue*> _vecSCQ;
 	vector<CompletionQueue*> _vecCQNewCall;
 
 	// 数据
@@ -37,7 +37,6 @@ public:
 };
 
 /* CAsyncRPCResponder 异步RPC应答器基类
-	包含启动、停止服务，以及演示数据
 */
 class CAsyncRPCResponder 
 {
@@ -45,8 +44,8 @@ public:
 	// 当前运行状态
 	enum class CallStatus { PROCESS, FINISH, DESTROY };
 
-	CAsyncRPCResponder(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService)
-		: _asyncService(service), _cqNewCall(cqNewCall), _cqNotification(cqNotification), _dataService(dataService)
+	CAsyncRPCResponder(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* scqNotification, CAsyncRPCService* dataService)
+		: _svcUser(service), _cqNewCall(cqNewCall), _scqNotification(scqNotification), _dataService(dataService)
 	{}
 
 protected:
@@ -57,9 +56,10 @@ protected:
 	CAsyncRPCService*		_dataService;	// 数据源
 	bool		_isNewResponderCreated = false;	// 是否创建了新的应答器
 
-	UserService::AsyncService*	_asyncService;
+	UserService::AsyncService*	_svcUser;
+
 	CompletionQueue*			_cqNewCall;
-	ServerCompletionQueue*		_cqNotification;
+	ServerCompletionQueue*		_scqNotification;
 	ServerContext				_ctx;
 
 public:
