@@ -84,14 +84,14 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 	auto token = _ctsCommon->get_token();
 	for each (auto scq in _vecSCQ)
 	{
-		CompletionQueue* cqNewCall = new CompletionQueue;
-		_vecCQNewCall.push_back(cqNewCall);
+// 		CompletionQueue* cqNewCall = new CompletionQueue;
+// 		_vecCQNewCall.push_back(cqNewCall);
 
 		// 创建应答器对象
-		new CAsyncRPCResponder_GetUser(_asyncUserService.get(), cqNewCall, scq, this);
-		new CAsyncRPCResponder_GetUsersByRole(_asyncUserService.get(), cqNewCall, scq, this);
-		new CAsyncRPCResponder_AddUsers(_asyncUserService.get(), cqNewCall, scq, this);
-		new CAsyncRPCResponder_DeleteUsers(_asyncUserService.get(), cqNewCall, scq, this);
+		new CAsyncRPCResponder_GetUser(_asyncUserService.get(), scq, scq, this);
+		new CAsyncRPCResponder_GetUsersByRole(_asyncUserService.get(), scq, scq, this);
+		new CAsyncRPCResponder_AddUsers(_asyncUserService.get(), scq, scq, this);
+		new CAsyncRPCResponder_DeleteUsers(_asyncUserService.get(), scq, scq, this);
 
 		task<void> taskProceed([&, scq, token]
 		{
@@ -116,35 +116,6 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 
 			scq->Shutdown();
 			delete scq;
-
-			str.clear();
-			str << GetTimeStr() << "CUser_RPCAsyncService::RunServer() taskEnd" << endl;
-			OutputDebugStringA(str.str().c_str());
-		});
-
-		task<void> taskOnNewCall([&, cqNewCall, token]
-		{
-			ostringstream str;
-			void* tag = nullptr;
-			bool ok = false;
-			while (!token.is_canceled())
-			{
-				if (!cqNewCall->Next(&tag, &ok)) // 阻塞，直至有新的事件
-				{
-					// 出现错误，服务停止
-					str.clear();
-					str << GetTimeStr() << "CUser_RPCAsyncService::RunServer() taskOnNewCall::Next() failed" << endl;
-					OutputDebugStringA(str.str().c_str());
-
-					break;
-				}
-
-				// 处理事件
-				static_cast<CAsyncRPCResponder*>(tag)->OnNewCall(ok);
-			}
-
-			cqNewCall->Shutdown();
-			delete cqNewCall;
 
 			str.clear();
 			str << GetTimeStr() << "CUser_RPCAsyncService::RunServer() taskEnd" << endl;
@@ -192,9 +163,9 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 		if (isOK)
 		{
 			// 创建新的应答器对象
-			if (!_isNewResponderCreated)
+			if (_isFirstCalled)
 			{
-				_isNewResponderCreated = true;
+				_isFirstCalled = false;
 				new CAsyncRPCResponder_GetUser(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
@@ -207,35 +178,27 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 			{
 				user.CopyFrom(users[_rqUserAccountName.accountname()]);
 
-				// 发送完成
+				// 回复
 				_responder.Finish(user, Status::OK, this);
 			}
 			else
 			{
-				// 发送完成
+				// 回复
 				_responder.Finish(user, Status(NOT_FOUND, "accountname not found"), this);
 			}
 		}
+		else if (_isFirstCalled)
+		{
+			delete this;
+		}
 		else
 		{
-			_callStatus = CallStatus::DESTROY;
-			delete this; // 应答结束
+			_callStatus = CallStatus::FINISH;
 		}
 	}
 	break;
-	default:
-		assert(false);
-		break;
-	}
-}
-
-void CAsyncRPCResponder_GetUser::OnNewCall(bool isOK)
-{
-	switch (_callStatus)
-	{
 	case CallStatus::FINISH:
 	{
-		_callStatus = CallStatus::DESTROY;
 		delete this; // 应答结束
 	}
 	break;
@@ -260,98 +223,73 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 		if (isOK)
 		{
 			// 创建新的应答器对象
-			if (!_isNewResponderCreated)
+			if (_isFirstCalled)
 			{
-				_isNewResponderCreated = true;
+				_isFirstCalled = false;
 				new CAsyncRPCResponder_GetUsersByRole(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
-			Process();
-		}
-		else
-		{
-			_callStatus = CallStatus::DESTROY;
-			delete this; // 应答结束
-		}
-	}
-		break;
-	default:
-		assert(false);
-		break;
-	}
-}
+			// 处理数据
+			auto& users = _dataService->GetUsers();
+			if (!users.empty())
+			{
+				auto iter = users.begin();
+				for (int i = 0; i != _tag; ++i)
+				{
+					++iter; // 根据标记调整数据指针
+				}
 
-void CAsyncRPCResponder_GetUsersByRole::OnNewCall(bool isOK /*= true*/)
-{
-	switch (_callStatus)
-	{
-	case CallStatus::PROCESS:
-	{
-		if (isOK)
+				while (true)
+				{
+					if (iter != users.end())
+					{
+						_tag++; // 标记当前发送进度
+						if (iter->second.userrole() == _rqUserRole.role())
+						{
+							// 回复一次stream数据
+							_responder.Write(iter->second, this);
+							break;
+						}
+						else
+						{
+							++iter;
+						}
+					}
+					else
+					{
+						// 全部回复完成
+						_callStatus = CallStatus::FINISH;
+						_responder.Finish(Status::OK, this);
+						break;
+					}
+				}
+			}
+			else
+			{
+				// 全部回复完成
+				_callStatus = CallStatus::FINISH;
+				_responder.Finish(Status(NOT_FOUND, "not found"), this);
+			}
+		}
+		else if (_isFirstCalled)
 		{
-			Process();
+			delete this;
 		}
 		else
 		{
-			// 发送完成
 			_callStatus = CallStatus::FINISH;
-			_responder.Finish(Status(CANCELLED, "error"), this);
+			_responder.Finish(Status(UNKNOWN, "UNKNOWN error"), this);
 		}
 	}
-	break;
+		break;
 	case CallStatus::FINISH:
 	{
-		_callStatus = CallStatus::DESTROY;
 		delete this; // 应答结束
 	}
 	break;
 	default:
 		assert(false);
 		break;
-	}
-}
-
-void CAsyncRPCResponder_GetUsersByRole::Process()
-{
-	auto& users = _dataService->GetUsers();
-	if (!users.empty())
-	{
-		auto iter = users.begin();
-		for (int i = 0; i != _tag; ++i)
-		{
-			++iter; // 根据标记调整数据指针
-		}
-
-		while (true)
-		{
-			if (iter != users.end())
-			{
-				_tag++; // 标记当前发送进度
-				if (iter->second.userrole() == _rqUserRole.role())
-				{
-					// 发送一次回复
-					_responder.Write(iter->second, this);
-					break;
-				}
-				else
-				{
-					++iter;
-				}
-			}
-			else
-			{
-				// 发送完成
-				_callStatus = CallStatus::FINISH;
-				_responder.Finish(Status::OK, this);
-				break;
-			}
-		}
-	}
-	else
-	{
-		// 发送完成
-		_callStatus = CallStatus::FINISH;
-		_responder.Finish(Status(NOT_FOUND, "no user"), this);
 	}
 }
 
@@ -370,51 +308,36 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 		if (isOK)
 		{
 			// 创建新的应答器对象
-			if (!_isNewResponderCreated)
+			if (_isFirstCalled)
 			{
-				_isNewResponderCreated = true;
+				_isFirstCalled = false;
 				new CAsyncRPCResponder_AddUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
-			}
 
-			// 第一次等待数据
-			_requester.Read(&_tmpUser, this); // 将客户端的请求数据存入成员变量_tmpUser中，不能使用临时变量！
-		}
-		else
-		{
-			_callStatus = CallStatus::DESTROY;
-			delete this; // 应答结束
-		}
-	}
-		break;
-	default:
-		assert(false);
-		break;
-	}
-}
-
-void CAsyncRPCResponder_AddUsers::OnNewCall(bool isOK)
-{
-	switch (_callStatus)
-	{
-	case CallStatus::PROCESS:
-	{
-		if (isOK)
-		{
-			// 处理接收到的一次stream数据
-			auto& users = _dataService->GetUsers();
-
-			string accountName = _tmpUser.accountname();
-			if (users.find(accountName) != users.end()) // 检查用户是否已存在
-			{
-				users[accountName].CopyFrom(_tmpUser);	// 更新用户数据
+				// 第一次等待数据
+				_requester.Read(&_tmpUser, this); // 将客户端的请求数据存入成员变量_tmpUser中，不能使用临时变量！
 			}
 			else
 			{
-				users.insert(map<string, User>::value_type(accountName, move(_tmpUser))); // 插入新用户
-			}
+				// 处理接收到的一次stream数据
+				auto& users = _dataService->GetUsers();
 
-			// 继续等待数据
-			_requester.Read(&_tmpUser, this); // 将客户端的请求数据存入成员变量_tmpUser中，不能使用临时变量！
+				string accountName = _tmpUser.accountname();
+				if (users.find(accountName) != users.end()) // 检查用户是否已存在
+				{
+					users[accountName].CopyFrom(_tmpUser);	// 更新用户数据
+				}
+				else
+				{
+					users.insert(map<string, User>::value_type(accountName, move(_tmpUser))); // 插入新用户
+				}
+
+				// 继续等待数据
+				_requester.Read(&_tmpUser, this); // 将客户端的请求数据存入成员变量_tmpUser中，不能使用临时变量！
+			}
+		}
+		else if (_isFirstCalled)
+		{
+			delete this; // 应答结束
 		}
 		else
 		{
@@ -427,10 +350,9 @@ void CAsyncRPCResponder_AddUsers::OnNewCall(bool isOK)
 			_requester.Finish(userCount, Status::OK, this);
 		}
 	}
-	break;
+		break;
 	case CallStatus::FINISH:
 	{
-		_callStatus = CallStatus::DESTROY;
 		delete this; // 应答结束
 	}
 	break;
@@ -456,102 +378,68 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 		if (isOK)
 		{
 			// 创建新的应答器对象
-			if (!_isNewResponderCreated)
+			if (_isFirstCalled)
 			{
-				_isNewResponderCreated = true;
+				_isFirstCalled = false;
 				new CAsyncRPCResponder_DeleteUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
-			}
 
-			// 第一次等待数据
-			_requester.Read(&_tmpAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
-		}
-		else
-		{
-			_callStatus = CallStatus::DESTROY;
-			delete this; // 应答结束
-		}
-	}
-		break;
-	default:
-		assert(false);
-		break;
-	}
-}
-
-void CAsyncRPCResponder_DeleteUsers::OnNewCall(bool isOK)
-{
-	switch (_callStatus)
-	{
-	case CallStatus::PROCESS:
-	{
-		// 开始读取
-		if (!_isReadComplete)
-		{
-			if (isOK)
-			{
-				// 处理接收到的一次stream数据
-				auto& users = _dataService->GetUsers();
-				if (users.find(_tmpAccountName.accountname()) != users.end()) // 检查用户是否已存在
-				{
-					ostringstream str;
-					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _tmpAccountName.accountname() << endl;
-					OutputDebugStringA(str.str().c_str());
-
-					// 服务器删除该用户数据
-					users.erase(_tmpAccountName.accountname());
-
-					// 保存删除的用户名
-					_rp_accountNames.push_back(move(_tmpAccountName));				
-				}
-
-				// 继续等待数据
-				_requester.Read(&_tmpAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
+				// 第一次等待数据
+				_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
 			}
 			else
 			{
-				// 读取结束
-				_isReadComplete = true;
-				isOK = true;
-			}
-		}
-
-		// 读取结束，开始回复
-		if (_isReadComplete)
-		{
-			if (isOK)
-			{
-				auto iter = _rp_accountNames.begin();
-				for (int i = 0; i != _tag; ++i)
+				if (_isReadMode)
 				{
-					++iter; // 根据标记调整数据指针
-				}
+					ostringstream str;
+					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _tmpRQAccountName.accountname() << endl;
+					OutputDebugStringA(str.str().c_str());
 
-				if (iter != _rp_accountNames.end())
-				{
-					_tag++; // 标记当前发送进度
+					// 处理接收到的一次stream数据
+					auto& users = _dataService->GetUsers();
+					if (users.find(_tmpRQAccountName.accountname()) != users.end()) // 检查用户是否存在
+					{
+						_tmpRPAccountName = _tmpRQAccountName;
 
-					_requester.Write(*iter, this);
+						// 服务器删除该用户数据
+						users.erase(_tmpRQAccountName.accountname());
+
+						// 回复一次stream数据
+						_isReadMode = false;
+						_requester.Write(_tmpRPAccountName, this);
+					}
+					else
+					{
+						// 继续等待数据
+						_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
+					}
 				}
 				else
 				{
-					// 发送完成
-					_callStatus = CallStatus::FINISH;
-					_requester.Finish(Status::OK, this);
+					// 继续等待数据
+					_isReadMode = true;
+					_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
 				}
 			}
-			else
-			{
-				_callStatus = CallStatus::FINISH;
-				_requester.Finish(Status(), (void*)this);
-			}
+		}
+		else if (_isFirstCalled)
+		{
+			delete this; // 应答结束
+		}
+		else
+		{
+			_callStatus = CallStatus::FINISH;
+			_requester.Finish(Status::OK, this);
 		}
 	}
-	break;
-	case CallStatus::FINISH:
-		delete this; // 应答结束
 		break;
+	case CallStatus::FINISH:
+	{
+		delete this; // 应答结束
+	}
+	break;
 	default:
 		assert(false);
 		break;
 	}
 }
+

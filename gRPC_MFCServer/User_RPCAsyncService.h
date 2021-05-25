@@ -42,7 +42,7 @@ class CAsyncRPCResponder
 {
 public:
 	// 当前运行状态
-	enum class CallStatus { PROCESS, FINISH, DESTROY };
+	enum class CallStatus { PROCESS, FINISH };
 
 	CAsyncRPCResponder(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* scqNotification, CAsyncRPCService* dataService)
 		: _svcUser(service), _cqNewCall(cqNewCall), _scqNotification(scqNotification), _dataService(dataService)
@@ -51,10 +51,8 @@ public:
 protected:
 
 	CallStatus _callStatus = CallStatus::PROCESS;	// 当前运行状态
-
-	int						_tag =  0;	// 数据进度标签
 	CAsyncRPCService*		_dataService;	// 数据源
-	bool		_isNewResponderCreated = false;	// 是否创建了新的应答器
+	bool		_isFirstCalled = true;	// 是否第一次被调用
 
 	UserService::AsyncService*	_svcUser;
 
@@ -64,7 +62,6 @@ protected:
 
 public:
 	virtual void OnNotification(bool isOK = true) = 0;
-	virtual void OnNewCall(bool isOK = true) = 0;
 };
 
 // UserService::GetUser 一对一
@@ -79,7 +76,6 @@ private:
 
 public:
 	virtual void OnNotification(bool isOK = true);
-	virtual void OnNewCall(bool isOK = true);
 };
 
 // UserService::GetUsersByRole  一对多
@@ -91,11 +87,10 @@ public:
 private:
 	UserRole						_rqUserRole;
 	ServerAsyncWriter<User>			_responder;
+	int								_tag = 0;	// 数据进度标签
 
-	void Process();
 public:
 	virtual void OnNotification(bool isOK = true);
-	virtual void OnNewCall(bool isOK = true);
 };
 
 // UserService::AddUsers 多对一
@@ -110,7 +105,6 @@ private:
 
 public:
 	virtual void OnNotification(bool isOK = true);
-	virtual void OnNewCall(bool isOK = true);
 };
 
 // UserService::DeleteUsers 多对多
@@ -120,12 +114,13 @@ public:
 	CAsyncRPCResponder_DeleteUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService);
 
 private:
-	bool _isReadComplete = false;
-	UserAccountName _tmpAccountName;
+	bool	_isReadMode = true;	// 当前为读模式
+	int		_tag = 0;	// 数据进度标签
+	UserAccountName _tmpRQAccountName;
+	UserAccountName _tmpRPAccountName;
 	vector<UserAccountName>	_rp_accountNames;	// 待返回的数据
 	ServerAsyncReaderWriter<UserAccountName, UserAccountName> _requester;
 
 public:
 	virtual void OnNotification(bool isOK = true);
-	virtual void OnNewCall(bool isOK = true);
 };
