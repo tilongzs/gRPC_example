@@ -3,45 +3,45 @@ syntax = "proto3";
 package TestGRPC;
 
 service UserService{
-// ¸ù¾İÓÃ»§Ãû»ñÈ¡ÓÃ»§ĞÅÏ¢
+// æ ¹æ®ç”¨æˆ·åè·å–ç”¨æˆ·ä¿¡æ¯
  rpc GetUser(UserAccountName) returns (User){} 
 
- // »ñÈ¡Ö¸¶¨½ÇÉ«µÄËùÓĞÓÃ»§ĞÅÏ¢
+ // è·å–æŒ‡å®šè§’è‰²çš„æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
  rpc GetUsersByRole(UserRole) returns (stream User){}
 
- // ÅúÁ¿Ôö¼ÓĞÂÓÃ»§£¬·µ»Ø·şÎñÆ÷ÓÃ»§×ÜÊı
+ // æ‰¹é‡å¢åŠ æ–°ç”¨æˆ·ï¼Œè¿”å›æœåŠ¡å™¨ç”¨æˆ·æ€»æ•°
  rpc AddUsers(stream User) returns (CommonCount){}
 
- // ÅúÁ¿É¾³ıÓÃ»§£¬·µ»ØÉ¾³ı³É¹¦µÄÓÃ»§Ãû
+ // æ‰¹é‡åˆ é™¤ç”¨æˆ·ï¼Œè¿”å›åˆ é™¤æˆåŠŸçš„ç”¨æˆ·å
  rpc DeleteUsers(stream UserAccountName) returns (stream UserAccountName){}
 }
 
-// ÓÃ»§ĞÅÏ¢
+// ç”¨æˆ·ä¿¡æ¯
 message User{
-	string accountName = 1;	// ÓÃ»§Ãû£¨Ó¢ÎÄ¡¢Êı×Ö¡¢ÏÂ»®Ïß¡¢@£©
-	string accountPWD = 2;	// ÃÜÂë
-	string nickName = 3;	// êÇ³Æ
+	string accountName = 1;	// ç”¨æˆ·åï¼ˆè‹±æ–‡ã€æ•°å­—ã€ä¸‹åˆ’çº¿ã€@ï¼‰
+	string accountPWD = 2;	// å¯†ç 
+	string nickName = 3;	// æ˜µç§°
 	uint32 age = 4;
-	Role userRole = 5;  // ÓÃ»§½ÇÉ«
+	Role userRole = 5;  // ç”¨æˆ·è§’è‰²
 }
 
-// ½ÇÉ«
+// è§’è‰²
 enum Role{
     USER    = 0;
     ADMIN   = 1;
 }
 
-// ÓÃ»§½ÇÉ«
+// ç”¨æˆ·è§’è‰²
 message UserRole{
     Role role = 1;
 }
 
-// ÓÃ»§Ãû
+// ç”¨æˆ·å
 message UserAccountName{
-    string accountName = 1;	// ÓÃ»§Ãû£¨Ó¢ÎÄ¡¢Êı×Ö¡¢ÏÂ»®Ïß¡¢@£©
+    string accountName = 1;	// ç”¨æˆ·åï¼ˆè‹±æ–‡ã€æ•°å­—ã€ä¸‹åˆ’çº¿ã€@ï¼‰
 }
 
-// ·şÎñÆ÷ÓÃ»§×ÜÊı
+// æœåŠ¡å™¨ç”¨æˆ·æ€»æ•°
 message CommonCount{
     uint32 count= 1;
 }

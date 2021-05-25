@@ -71,6 +71,12 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="User_RPCAsyncService.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="User_RPCService.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="..\proto\helloworld\helloworld.grpc.pb.cc">
       <Filter>Proto\helloworld</Filter>
     </ClCompile>
@@ -82,12 +88,6 @@
     </ClCompile>
     <ClCompile Include="..\proto\User\User.pb.cc">
       <Filter>Proto\User</Filter>
-    </ClCompile>
-    <ClCompile Include="User_RPCAsyncService.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="User_RPCService.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

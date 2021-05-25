@@ -17,7 +17,7 @@
             "windowsSdkVersion": "10.0.19041.0",
             "compilerPath": "D:/Program/VS2019/VC/Tools/MSVC/14.28.29910/bin/Hostx64/x64/cl.exe",
             "cStandard": "c17",
-            "cppStandard": "c++14",
+            "cppStandard": "c++17",
             "intelliSenseMode": "windows-msvc-x64"
         }
     ],

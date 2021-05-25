@@ -21,7 +21,10 @@ CServerApp::CServerApp()
 
 CServerApp theApp;
 
-
+#if defined(_WIN64) || defined(WIN64) || defined(_WIN32) || defined(WIN32) 
+#include <SDKDDKVer.h> 
+#ifndef WIN32_LEAN_AND_MEAN
+#endif
 BOOL CServerApp::InitInstance()
 {
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
