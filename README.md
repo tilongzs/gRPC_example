@@ -5,11 +5,11 @@ gRPC的基本使用演示工程。包含同步模式和异步模式的基本使�
 
 
 #### 安装教程
-通过vcpkg安装，并引用了cpprest库的task并行类。
+通过vcpkg安装。
 
 - .\vcpkg install grpc
-- .\vcpkg install cpprest
 
+默认使用Debug、X64配置，以及C++17和C17标准编译。
 
 #### 使用说明
 
@@ -19,3 +19,4 @@ gRPC_MFCClient与gRPC_MFCServer是两个MFC工程，包含同步模式和异步�
 
 #### 其他
 博客原文：https://www.mengmei.moe/note/1015.html
+编译问题请参考：《[gRPC-开发常用笔记](https://www.mengmei.moe/note/958.html)》
