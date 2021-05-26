@@ -114,7 +114,7 @@ public:
 	CAsyncRPCResponder_DeleteUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService);
 
 private:
-	bool	_isReadMode = true;	// 当前为读模式
+	bool	_isNeedRead = true;	// 当前为读模式
 	int		_tag = 0;	// 数据进度标签
 	UserAccountName _tmpRQAccountName;
 	UserAccountName _tmpRPAccountName;

@@ -168,7 +168,7 @@ void CgRPCMFCServerDlg::OnBnClickedButtonRunAsyncServer()
 	{
 		// 启动异步服务
 		_asyncRPCServer = make_unique<CAsyncRPCService>();
-		_asyncRPCServer->Run(_serverAddr, 1);
+		_asyncRPCServer->Run(_serverAddr, 4);
 
 		AppendMsg(L"异步服务启动 0.0.0.0:23351");
 		_btnRunAsyncServer.SetWindowTextW(L"关闭异步服务");

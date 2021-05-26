@@ -53,7 +53,8 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 
 	_stub = UserService::NewStub(_channel);
 
-	task<void> taskProceed([&]
+	auto token = _ctsCommon->get_token();
+	task<void> taskProceed([&, token]
 	{
 		ostringstream str;
 		str << GetTimeStr() << "CommonAsyncClientCall::RunClient() taskBegin" << endl;
@@ -61,7 +62,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 
 		void* tag = nullptr;
 		bool ok = false;
-		while (true)
+		while (!token.is_canceled())
 		{
 			if (!_cq.Next(&tag, &ok)) // 阻塞，直至有新的事件
 			{
@@ -75,10 +76,18 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 			static_cast<CAsyncRPCRequester*>(tag)->Proceed(ok);
 		}
 
+		_cq.Shutdown();
+
 		str.clear();
 		str << GetTimeStr() << "CommonAsyncClientCall::RunClient() taskEnd" << endl;
 		OutputDebugStringA(str.str().c_str());
 	});
+}
+
+void CAsyncRPCClient::Shutdown()
+{
+	_cq.Shutdown();
+	_ctsCommon->cancel();
 }
 
 void CAsyncRPCClient::GetUser(const string& accountName)
@@ -129,6 +138,10 @@ void CAsyncRPC_GetUser::Proceed(bool isOK /*= true*/)
 			_mainDlg->OnGetUser(nullptr);
 		}
 	}
+	else if (_isFirstCalled)
+	{
+		delete this; // 应答结束
+	}
 	else
 	{
 		// 接收过程中发送错误
@@ -149,25 +162,26 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 {
 	switch (_callStatus)
 	{
-	case CAsyncRPCRequester::CallStatus::PROCESS:
+	case CallStatus::PROCESS:
 	{
 		if (isOK)
 		{
 			if (_status.ok())
 			{
 				// 第一次等待数据
-				if (_isFirstRead)
+				if (_isFirstCalled)
 				{
-					_isFirstRead = false;
+					_isFirstCalled = false;
 					_responsder->Read(&_reply, this);
-					return;
 				}
+				else
+				{
+					// 处理接收到的一次stream数据
+					_mainDlg->OnGetUsersByRole(make_shared<User>(move(_reply)));
 
-				// 处理接收到的一次stream数据
-				_mainDlg->OnGetUsersByRole(make_shared<User>(move(_reply)));
-
-				// 继续等待数据
-				_responsder->Read(&_reply, this);
+					// 继续等待数据
+					_responsder->Read(&_reply, this);
+				}
 			}
 			else
 			{
@@ -178,23 +192,27 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 
 				_mainDlg->OnGetUsersByRoleComplete(false);
 
-				_callStatus = CAsyncRPCRequester::CallStatus::FINISH;
+				_callStatus = CallStatus::FINISH;
 				_responsder->Finish(&_status, this);
 			}
+		}
+		else if (_isFirstCalled)
+		{
+			delete this; // 应答结束
 		}
 		else
 		{
 			// 接收完成
-			_callStatus = CAsyncRPCRequester::CallStatus::FINISH;
+			_callStatus = CallStatus::FINISH;
 			_responsder->Finish(&_status, this);
 
 			_mainDlg->OnGetUsersByRoleComplete(true);
 		}
 	}
 	break;
-	case CAsyncRPCRequester::CallStatus::FINISH:
+	case CallStatus::FINISH:
 	{
-		delete this;
+		delete this; // 应答结束
 	}
 	break;
 	default:
@@ -215,7 +233,7 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 {
 	switch (_callStatus)
 	{
-	case CAsyncRPCRequester::CallStatus::PROCESS:
+	case CallStatus::PROCESS:
 	{
 		if (isOK)
 		{
@@ -234,6 +252,7 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 				}
 				else
 				{
+					// 发送完成
 					_isSendComplete = true;
 					_responsder->WritesDone(this);
 				}
@@ -246,12 +265,14 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 			}
 			else
 			{
-				_mainDlg->OnAddUsersComplete(true);
-
 				// 结束发送
 				_callStatus = CallStatus::FINISH;
 				_responsder->Finish(&_status, this);
 			}
+		}
+		else if (_isFirstCalled)
+		{
+			delete this; // 应答结束
 		}
 		else
 		{
@@ -263,8 +284,12 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 		}		
 	}
 		break;
-	case CAsyncRPCRequester::CallStatus::FINISH:
+	case CallStatus::FINISH:
 	{
+		// 处理收到的回复数据
+		_mainDlg->OnAddUsersComplete(true, _reply.count());
+
+		// 应答结束
 		delete this;
 	}
 		break;
@@ -286,73 +311,70 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 {
 	switch (_callStatus)
 	{
-	case CAsyncRPCRequester::CallStatus::PROCESS:
+	case CallStatus::PROCESS:
 	{
-		if (!_isSendComplete)
+		if (isOK)
 		{
-			if (isOK)
+			// 第一次等待数据
+			if (_isFirstCalled)
 			{
+				_isFirstCalled = false;
+
+				// 发送一次stream数据
 				auto iter = _request->begin();
-				for (int i = 0; i != _tag; ++i)
+				_tag++; // 标记当前发送进度
+				_isNeedRead = false;
+				_responsder->Write(*iter, this);
+			}
+			else
+			{
+				if (_isNeedRead)
 				{
-					++iter; // 根据标记调整数据指针
-				}
+					// 处理接收到的一次stream数据
+					_mainDlg->OnDeleteUsers(make_shared<string>(_reply.accountname()));
+					_deletedUserAccountName.push_back(move(_reply));
 
-				if (iter != _request->end())
-				{
-					ostringstream str;
-					str << GetTimeStr() << "CAsyncRPC_DeleteUsers::Proceed() Write:" << iter->accountname() << endl;
-					OutputDebugStringA(str.str().c_str());
+					// 发送请求数据
+					auto iter = _request->begin();
+					for (int i = 0; i != _tag; ++i)
+					{
+						++iter; // 根据标记调整数据指针
+					}
 
-					_tag++; // 标记当前发送进度
-					_responsder->Write(*iter, this);
+					if (iter != _request->end())
+					{
+						_tag++; // 标记当前发送进度
+						_isNeedRead = false;
+						_responsder->Write(*iter, this);// 发送一次stream数据
+					}
+					else
+					{
+						// 全部请求发送完成
+						_isSendComplete = true;
+						_isNeedRead = false;
+						_responsder->WritesDone(this); // 结束发送
+					}
 				}
 				else
 				{
-					_isSendComplete = true;
-					_responsder->WritesDone(this);
+					// 继续等待数据
+					_isNeedRead = true;
+					_responsder->Read(&_reply, this);
 				}
-			}
-			else
-			{
-				_mainDlg->OnDeleteUsersComplete(false);
-
-				// 结束发送
-				_callStatus = CallStatus::FINISH;
-				_responsder->Finish(&_status, this);
-			}
+			}			
+		}
+		else if (_isFirstCalled)
+		{
+			delete this; // 应答结束
 		}
 		else
 		{
-			if (isOK)
-			{
-				// 第一次等待数据
-				if (_isFirstRead)
-				{
-					_isFirstRead = false;
-					_responsder->Read(&_reply, this);
-					return;
-				}
-				
-				// 处理接收到的一次stream数据
-				_mainDlg->OnDeleteUsers(make_shared<string>(_reply.accountname()));
-				_deletedUserAccountName.push_back(move(_reply));
-
-				// 继续等待数据
-				_responsder->Read(&_reply, this);
-			}
-			else
-			{
-				_mainDlg->OnDeleteUsersComplete(true);
-
-				// 结束接收
-				_callStatus = CallStatus::FINISH;
-				_responsder->Finish(&_status, this);
-			}
+			_callStatus = CallStatus::FINISH;
+			_responsder->Finish(&_status, this);
 		}
 	}
 		break;
-	case CAsyncRPCRequester::CallStatus::FINISH:
+	case CallStatus::FINISH:
 	{
 		delete this;
 	}

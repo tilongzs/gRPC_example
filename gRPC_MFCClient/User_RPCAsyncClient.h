@@ -2,12 +2,13 @@
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/client_context.h>
-
+#include <pplx/pplxtasks.h>
 #include "../proto/User/User.grpc.pb.h"
 
 using namespace grpc;
 using namespace TestGRPC;
 using namespace std;
+using namespace Concurrency;
 
 class CgRPCMFCClientDlg;
 class CAsyncRPCClient
@@ -17,9 +18,11 @@ private:
 	CompletionQueue		_cq;
 	std::unique_ptr<UserService::Stub> _stub;
 	shared_ptr<Channel> _channel = nullptr;
+	unique_ptr<cancellation_token_source> _ctsCommon = make_unique<cancellation_token_source>();
 
 public:
 	void Run(CgRPCMFCClientDlg* mainDlg, string serverAddr);
+	void Shutdown();
 	void GetUser(const string& accountName);
 	void GetUsersByRole(const Role& role);
 	void AddUsers(shared_ptr<vector<User>> users);
@@ -34,7 +37,8 @@ public:
 
 protected:
 	CallStatus	_callStatus = CallStatus::PROCESS;	// 当前运行状态
-	int				_tag;	// 运行进度标签
+	int			_tag;	// 运行进度标签
+	bool		_isFirstCalled = true;	// 是否第一次被调用
 
 	ClientContext					_ctx;
 	Status							_status;
@@ -67,7 +71,7 @@ private:
 	User	_reply;
 	unique_ptr<ClientAsyncReader<User>> _responsder;
 
-	bool _isFirstRead = true;
+	
 public:
 	virtual void Proceed(bool isOK = true);
 };
@@ -100,10 +104,10 @@ private:
 	shared_ptr<vector<UserAccountName>>	_request; // 存储请求数据指针
 	vector<UserAccountName> _deletedUserAccountName;	// 存储接收到的数据
 
-	bool _isFirstRead = true;
+	bool _isNeedRead = false;
 	bool _isSendComplete = false;
 	unique_ptr<ClientAsyncReaderWriter<UserAccountName, UserAccountName>> _responsder;
-	UserAccountName _reply;	// 存储收到的数据
+	UserAccountName _reply;
 public:
 	virtual void Proceed(bool isOK = true);
 };

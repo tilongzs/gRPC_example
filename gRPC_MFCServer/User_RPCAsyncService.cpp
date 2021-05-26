@@ -3,7 +3,6 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
-#include <pplx/pplxtasks.h>
 #include <chrono>
 #include <sstream>
 #include <fstream>
@@ -388,7 +387,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 			}
 			else
 			{
-				if (_isReadMode)
+				if (_isNeedRead)
 				{
 					ostringstream str;
 					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _tmpRQAccountName.accountname() << endl;
@@ -404,7 +403,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 						users.erase(_tmpRQAccountName.accountname());
 
 						// 回复一次stream数据
-						_isReadMode = false;
+						_isNeedRead = false;
 						_requester.Write(_tmpRPAccountName, this);
 					}
 					else
@@ -416,7 +415,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 				else
 				{
 					// 继续等待数据
-					_isReadMode = true;
+					_isNeedRead = true;
 					_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
 				}
 			}

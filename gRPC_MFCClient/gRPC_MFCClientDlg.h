@@ -60,7 +60,7 @@ public:
 	void OnGetUsersByRole(shared_ptr<User> user);
 	void OnGetUsersByRoleComplete(bool isSucceed);
 	void OnAddUsers(shared_ptr<string> userAccountName);
-	void OnAddUsersComplete(bool isSucceed);
+	void OnAddUsersComplete(bool isSucceed, int count = -1);
 	void OnDeleteUsers(shared_ptr<string> userAccountName);
 	void OnDeleteUsersComplete(bool isSucceed);
 };

@@ -150,6 +150,7 @@ void CgRPCMFCClientDlg::OnBnClickedButtonRunAsyncClient()
 {
 	if (_user_AsyncRPCClient)
 	{
+		_user_AsyncRPCClient->Shutdown();
 		_user_AsyncRPCClient = nullptr;
 
 		AppendMsg(L"异步客户端已停止");
@@ -390,11 +391,13 @@ void CgRPCMFCClientDlg::OnAddUsers(shared_ptr<string> userAccountName)
 	AppendMsg(A2W(strTmp));
 }
 
-void CgRPCMFCClientDlg::OnAddUsersComplete(bool isSucceed)
+void CgRPCMFCClientDlg::OnAddUsersComplete(bool isSucceed, int count)
 {
 	if (isSucceed)
 	{
-		AppendMsg(L"批量增加用户 完成");
+		CString strTmp;
+		strTmp.Format(L"批量增加%d个用户 完成", count);
+		AppendMsg(strTmp);
 	}
 	else
 	{
