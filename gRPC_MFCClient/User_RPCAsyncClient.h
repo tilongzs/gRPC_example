@@ -18,7 +18,7 @@ private:
 	CompletionQueue		_cq;
 	std::unique_ptr<UserService::Stub> _stub;
 	shared_ptr<Channel> _channel = nullptr;
-	unique_ptr<cancellation_token_source> _ctsCommon = make_unique<cancellation_token_source>();
+	unique_ptr<cancellation_token_source> _ctsCommon = nullptr;
 
 public:
 	void Run(CgRPCMFCClientDlg* mainDlg, string serverAddr);
@@ -88,7 +88,7 @@ private:
 
 	bool _isSendComplete = false;
 	unique_ptr<ClientAsyncWriter<User>> _responsder;
-	CommonCount _reply;	// 存储收到的数据
+	CommonNumber _reply;	// 存储收到的数据
 public:
 	virtual void Proceed(bool isOK = true);
 };
@@ -102,12 +102,11 @@ public:
 private:
 	CgRPCMFCClientDlg* _mainDlg = nullptr;
 	shared_ptr<vector<UserAccountName>>	_request; // 存储请求数据指针
-	vector<UserAccountName> _deletedUserAccountName;	// 存储接收到的数据
 
-	bool _isNeedRead = false;
+	bool _isWriteDone = false;
 	bool _isSendComplete = false;
-	unique_ptr<ClientAsyncReaderWriter<UserAccountName, UserAccountName>> _responsder;
-	UserAccountName _reply;
+	unique_ptr<ClientAsyncReaderWriter<UserAccountName, CommonMsg>> _responsder;
+	CommonMsg _reply;
 public:
 	virtual void Proceed(bool isOK = true);
 };

@@ -101,7 +101,7 @@ public:
 
 private:
 	User _tmpUser;
-	ServerAsyncReader<CommonCount, User> _requester;
+	ServerAsyncReader<CommonNumber, User> _requester;
 
 public:
 	virtual void OnNotification(bool isOK = true);
@@ -114,12 +114,10 @@ public:
 	CAsyncRPCResponder_DeleteUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService);
 
 private:
-	bool	_isNeedRead = true;	// 当前为读模式
+	bool	_isWriteDone = true;	// 当前为读模式
 	int		_tag = 0;	// 数据进度标签
-	UserAccountName _tmpRQAccountName;
-	UserAccountName _tmpRPAccountName;
-	vector<UserAccountName>	_rp_accountNames;	// 待返回的数据
-	ServerAsyncReaderWriter<UserAccountName, UserAccountName> _requester;
+	UserAccountName _rqAccountName;
+	ServerAsyncReaderWriter<CommonMsg, UserAccountName> _requester;
 
 public:
 	virtual void OnNotification(bool isOK = true);

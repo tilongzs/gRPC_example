@@ -39,6 +39,7 @@ protected:
 
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
+	afx_msg void OnClose();
 	DECLARE_MESSAGE_MAP()
 
 	void AppendMsg(const WCHAR* msg);
@@ -61,6 +62,6 @@ public:
 	void OnGetUsersByRoleComplete(bool isSucceed);
 	void OnAddUsers(shared_ptr<string> userAccountName);
 	void OnAddUsersComplete(bool isSucceed, int count = -1);
-	void OnDeleteUsers(shared_ptr<string> userAccountName);
-	void OnDeleteUsersComplete(bool isSucceed);
+	void OnDeleteUsers(bool isSucceed, shared_ptr<string> msg);
+	void OnDeleteUsersComplete();
 };

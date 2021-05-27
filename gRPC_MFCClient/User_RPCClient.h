@@ -20,6 +20,6 @@ public:
 	shared_ptr<User> GetUser(const string& accountName);
 	shared_ptr<vector<User>> GetUsersByRole(const Role& role);
 	shared_ptr<unsigned> AddUsers(const shared_ptr<vector<User>>& users);
-	shared_ptr<vector<UserAccountName>> DeleteUsers(shared_ptr<vector<UserAccountName>> accountNames);
+	void DeleteUsers(shared_ptr<vector<UserAccountName>> accountNames);
 };
 

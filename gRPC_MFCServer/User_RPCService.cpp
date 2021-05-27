@@ -66,7 +66,7 @@ Status CUser_RPCService::GetUsersByRole(ServerContext* context, const UserRole* 
 	}
 }
 
-Status CUser_RPCService::AddUsers(ServerContext* context, ServerReader< User>* reader, CommonCount* response)
+Status CUser_RPCService::AddUsers(ServerContext* context, ServerReader< User>* reader, CommonNumber* response)
 {
 	User user;
 	while (reader->Read(&user))
@@ -86,12 +86,12 @@ Status CUser_RPCService::AddUsers(ServerContext* context, ServerReader< User>* r
 	}
 
 	// 回复
-	response->set_count(_users.size());
+	response->set_num(_users.size());
 
 	return Status::OK;
 }
 
-Status CUser_RPCService::DeleteUsers(ServerContext* context, ServerReaderWriter<UserAccountName, UserAccountName>* stream)
+Status CUser_RPCService::DeleteUsers(ServerContext* context, ServerReaderWriter<CommonMsg, UserAccountName>* stream)
 {
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 	default_random_engine generator(seed);
@@ -113,10 +113,28 @@ Status CUser_RPCService::DeleteUsers(ServerContext* context, ServerReaderWriter<
 			// 服务器删除该用户数据
 			_users.erase(accountName.accountname());
 
-			// 回复
-			stream->Write(accountName);
+			/* 可选
+				// 创建回复数据
+				CommonMsg rp;
+				rp.set_issucess(true);
 
-			this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // 模拟延时发送
+				// 回复一次stream数据
+				_isWriteDone = false;
+				_requester.Write(rp, this);
+			*/
+		}
+		else
+		{
+			// 模拟延时发送
+			this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator)));
+
+			// 创建回复数据
+			CommonMsg rp;
+			rp.set_issucess(false);
+			str.clear();
+			str << "DeleteUsers:not found " << accountName.accountname() << endl;
+			rp.set_msg(str.str());
+			stream->Write(rp);
 		}
 	}
 

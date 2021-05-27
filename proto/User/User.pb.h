@@ -47,7 +47,7 @@ struct TableStruct_proto_2fUser_2fUser_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -56,9 +56,12 @@ struct TableStruct_proto_2fUser_2fUser_2eproto {
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_proto_2fUser_2fUser_2eproto;
 ::PROTOBUF_NAMESPACE_ID::Metadata descriptor_table_proto_2fUser_2fUser_2eproto_metadata_getter(int index);
 namespace TestGRPC {
-class CommonCount;
-struct CommonCountDefaultTypeInternal;
-extern CommonCountDefaultTypeInternal _CommonCount_default_instance_;
+class CommonMsg;
+struct CommonMsgDefaultTypeInternal;
+extern CommonMsgDefaultTypeInternal _CommonMsg_default_instance_;
+class CommonNumber;
+struct CommonNumberDefaultTypeInternal;
+extern CommonNumberDefaultTypeInternal _CommonNumber_default_instance_;
 class User;
 struct UserDefaultTypeInternal;
 extern UserDefaultTypeInternal _User_default_instance_;
@@ -70,7 +73,8 @@ struct UserRoleDefaultTypeInternal;
 extern UserRoleDefaultTypeInternal _UserRole_default_instance_;
 }  // namespace TestGRPC
 PROTOBUF_NAMESPACE_OPEN
-template<> ::TestGRPC::CommonCount* Arena::CreateMaybeMessage<::TestGRPC::CommonCount>(Arena*);
+template<> ::TestGRPC::CommonMsg* Arena::CreateMaybeMessage<::TestGRPC::CommonMsg>(Arena*);
+template<> ::TestGRPC::CommonNumber* Arena::CreateMaybeMessage<::TestGRPC::CommonNumber>(Arena*);
 template<> ::TestGRPC::User* Arena::CreateMaybeMessage<::TestGRPC::User>(Arena*);
 template<> ::TestGRPC::UserAccountName* Arena::CreateMaybeMessage<::TestGRPC::UserAccountName>(Arena*);
 template<> ::TestGRPC::UserRole* Arena::CreateMaybeMessage<::TestGRPC::UserRole>(Arena*);
@@ -587,24 +591,24 @@ class UserAccountName PROTOBUF_FINAL :
 };
 // -------------------------------------------------------------------
 
-class CommonCount PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TestGRPC.CommonCount) */ {
+class CommonMsg PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TestGRPC.CommonMsg) */ {
  public:
-  inline CommonCount() : CommonCount(nullptr) {}
-  virtual ~CommonCount();
-  explicit constexpr CommonCount(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline CommonMsg() : CommonMsg(nullptr) {}
+  virtual ~CommonMsg();
+  explicit constexpr CommonMsg(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  CommonCount(const CommonCount& from);
-  CommonCount(CommonCount&& from) noexcept
-    : CommonCount() {
+  CommonMsg(const CommonMsg& from);
+  CommonMsg(CommonMsg&& from) noexcept
+    : CommonMsg() {
     *this = ::std::move(from);
   }
 
-  inline CommonCount& operator=(const CommonCount& from) {
+  inline CommonMsg& operator=(const CommonMsg& from) {
     CopyFrom(from);
     return *this;
   }
-  inline CommonCount& operator=(CommonCount&& from) noexcept {
+  inline CommonMsg& operator=(CommonMsg&& from) noexcept {
     if (GetArena() == from.GetArena()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -622,20 +626,20 @@ class CommonCount PROTOBUF_FINAL :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const CommonCount& default_instance() {
+  static const CommonMsg& default_instance() {
     return *internal_default_instance();
   }
-  static inline const CommonCount* internal_default_instance() {
-    return reinterpret_cast<const CommonCount*>(
-               &_CommonCount_default_instance_);
+  static inline const CommonMsg* internal_default_instance() {
+    return reinterpret_cast<const CommonMsg*>(
+               &_CommonMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     3;
 
-  friend void swap(CommonCount& a, CommonCount& b) {
+  friend void swap(CommonMsg& a, CommonMsg& b) {
     a.Swap(&b);
   }
-  inline void Swap(CommonCount* other) {
+  inline void Swap(CommonMsg* other) {
     if (other == this) return;
     if (GetArena() == other->GetArena()) {
       InternalSwap(other);
@@ -643,7 +647,7 @@ class CommonCount PROTOBUF_FINAL :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(CommonCount* other) {
+  void UnsafeArenaSwap(CommonMsg* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -651,17 +655,17 @@ class CommonCount PROTOBUF_FINAL :
 
   // implements Message ----------------------------------------------
 
-  inline CommonCount* New() const final {
-    return CreateMaybeMessage<CommonCount>(nullptr);
+  inline CommonMsg* New() const final {
+    return CreateMaybeMessage<CommonMsg>(nullptr);
   }
 
-  CommonCount* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<CommonCount>(arena);
+  CommonMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CommonMsg>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const CommonCount& from);
-  void MergeFrom(const CommonCount& from);
+  void CopyFrom(const CommonMsg& from);
+  void MergeFrom(const CommonMsg& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -675,13 +679,13 @@ class CommonCount PROTOBUF_FINAL :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(CommonCount* other);
+  void InternalSwap(CommonMsg* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "TestGRPC.CommonCount";
+    return "TestGRPC.CommonMsg";
   }
   protected:
-  explicit CommonCount(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  explicit CommonMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   private:
   static void ArenaDtor(void* object);
   inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -700,25 +704,180 @@ class CommonCount PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCountFieldNumber = 1,
+    kMsgFieldNumber = 2,
+    kIsSucessFieldNumber = 1,
   };
-  // uint32 count = 1;
-  void clear_count();
-  ::PROTOBUF_NAMESPACE_ID::uint32 count() const;
-  void set_count(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // string msg = 2;
+  void clear_msg();
+  const std::string& msg() const;
+  void set_msg(const std::string& value);
+  void set_msg(std::string&& value);
+  void set_msg(const char* value);
+  void set_msg(const char* value, size_t size);
+  std::string* mutable_msg();
+  std::string* release_msg();
+  void set_allocated_msg(std::string* msg);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_count() const;
-  void _internal_set_count(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_msg() const;
+  void _internal_set_msg(const std::string& value);
+  std::string* _internal_mutable_msg();
   public:
 
-  // @@protoc_insertion_point(class_scope:TestGRPC.CommonCount)
+  // bool isSucess = 1;
+  void clear_issucess();
+  bool issucess() const;
+  void set_issucess(bool value);
+  private:
+  bool _internal_issucess() const;
+  void _internal_set_issucess(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:TestGRPC.CommonMsg)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 count_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+  bool issucess_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_proto_2fUser_2fUser_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CommonNumber PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:TestGRPC.CommonNumber) */ {
+ public:
+  inline CommonNumber() : CommonNumber(nullptr) {}
+  virtual ~CommonNumber();
+  explicit constexpr CommonNumber(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CommonNumber(const CommonNumber& from);
+  CommonNumber(CommonNumber&& from) noexcept
+    : CommonNumber() {
+    *this = ::std::move(from);
+  }
+
+  inline CommonNumber& operator=(const CommonNumber& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CommonNumber& operator=(CommonNumber&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const CommonNumber& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CommonNumber* internal_default_instance() {
+    return reinterpret_cast<const CommonNumber*>(
+               &_CommonNumber_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(CommonNumber& a, CommonNumber& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CommonNumber* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CommonNumber* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CommonNumber* New() const final {
+    return CreateMaybeMessage<CommonNumber>(nullptr);
+  }
+
+  CommonNumber* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CommonNumber>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const CommonNumber& from);
+  void MergeFrom(const CommonNumber& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CommonNumber* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "TestGRPC.CommonNumber";
+  }
+  protected:
+  explicit CommonNumber(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    return ::descriptor_table_proto_2fUser_2fUser_2eproto_metadata_getter(kIndexInFileMessages);
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNumFieldNumber = 1,
+  };
+  // uint32 num = 1;
+  void clear_num();
+  ::PROTOBUF_NAMESPACE_ID::uint32 num() const;
+  void set_num(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_num() const;
+  void _internal_set_num(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:TestGRPC.CommonNumber)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 num_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_proto_2fUser_2fUser_2eproto;
 };
@@ -1047,31 +1206,118 @@ inline void UserAccountName::set_allocated_accountname(std::string* accountname)
 
 // -------------------------------------------------------------------
 
-// CommonCount
+// CommonMsg
 
-// uint32 count = 1;
-inline void CommonCount::clear_count() {
-  count_ = 0u;
+// bool isSucess = 1;
+inline void CommonMsg::clear_issucess() {
+  issucess_ = false;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CommonCount::_internal_count() const {
-  return count_;
+inline bool CommonMsg::_internal_issucess() const {
+  return issucess_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 CommonCount::count() const {
-  // @@protoc_insertion_point(field_get:TestGRPC.CommonCount.count)
-  return _internal_count();
+inline bool CommonMsg::issucess() const {
+  // @@protoc_insertion_point(field_get:TestGRPC.CommonMsg.isSucess)
+  return _internal_issucess();
 }
-inline void CommonCount::_internal_set_count(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void CommonMsg::_internal_set_issucess(bool value) {
   
-  count_ = value;
+  issucess_ = value;
 }
-inline void CommonCount::set_count(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_count(value);
-  // @@protoc_insertion_point(field_set:TestGRPC.CommonCount.count)
+inline void CommonMsg::set_issucess(bool value) {
+  _internal_set_issucess(value);
+  // @@protoc_insertion_point(field_set:TestGRPC.CommonMsg.isSucess)
+}
+
+// string msg = 2;
+inline void CommonMsg::clear_msg() {
+  msg_.ClearToEmpty();
+}
+inline const std::string& CommonMsg::msg() const {
+  // @@protoc_insertion_point(field_get:TestGRPC.CommonMsg.msg)
+  return _internal_msg();
+}
+inline void CommonMsg::set_msg(const std::string& value) {
+  _internal_set_msg(value);
+  // @@protoc_insertion_point(field_set:TestGRPC.CommonMsg.msg)
+}
+inline std::string* CommonMsg::mutable_msg() {
+  // @@protoc_insertion_point(field_mutable:TestGRPC.CommonMsg.msg)
+  return _internal_mutable_msg();
+}
+inline const std::string& CommonMsg::_internal_msg() const {
+  return msg_.Get();
+}
+inline void CommonMsg::_internal_set_msg(const std::string& value) {
+  
+  msg_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArena());
+}
+inline void CommonMsg::set_msg(std::string&& value) {
+  
+  msg_.Set(
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:TestGRPC.CommonMsg.msg)
+}
+inline void CommonMsg::set_msg(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  msg_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(value), GetArena());
+  // @@protoc_insertion_point(field_set_char:TestGRPC.CommonMsg.msg)
+}
+inline void CommonMsg::set_msg(const char* value,
+    size_t size) {
+  
+  msg_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:TestGRPC.CommonMsg.msg)
+}
+inline std::string* CommonMsg::_internal_mutable_msg() {
+  
+  return msg_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArena());
+}
+inline std::string* CommonMsg::release_msg() {
+  // @@protoc_insertion_point(field_release:TestGRPC.CommonMsg.msg)
+  return msg_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void CommonMsg::set_allocated_msg(std::string* msg) {
+  if (msg != nullptr) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), msg,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:TestGRPC.CommonMsg.msg)
+}
+
+// -------------------------------------------------------------------
+
+// CommonNumber
+
+// uint32 num = 1;
+inline void CommonNumber::clear_num() {
+  num_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CommonNumber::_internal_num() const {
+  return num_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 CommonNumber::num() const {
+  // @@protoc_insertion_point(field_get:TestGRPC.CommonNumber.num)
+  return _internal_num();
+}
+inline void CommonNumber::_internal_set_num(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  num_ = value;
+}
+inline void CommonNumber::set_num(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_num(value);
+  // @@protoc_insertion_point(field_set:TestGRPC.CommonNumber.num)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

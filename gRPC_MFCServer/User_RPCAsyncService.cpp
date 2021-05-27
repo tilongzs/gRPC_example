@@ -344,8 +344,8 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 
 			// 回复
 			auto& users = _dataService->GetUsers();
-			CommonCount userCount;
-			userCount.set_count(users.size());
+			CommonNumber userCount;
+			userCount.set_num(users.size());
 			_requester.Finish(userCount, Status::OK, this);
 		}
 	}
@@ -383,40 +383,52 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 				new CAsyncRPCResponder_DeleteUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
 
 				// 第一次等待数据
-				_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
+				_requester.Read(&_rqAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
 			}
 			else
 			{
-				if (_isNeedRead)
+				if (_isWriteDone)
 				{
 					ostringstream str;
-					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _tmpRQAccountName.accountname() << endl;
+					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _rqAccountName.accountname() << endl;
 					OutputDebugStringA(str.str().c_str());
 
-					// 处理接收到的一次stream数据
+					// 处理接收到的一次stream数据。必须回复，否则客户端将不继续发送数据！
 					auto& users = _dataService->GetUsers();
-					if (users.find(_tmpRQAccountName.accountname()) != users.end()) // 检查用户是否存在
+					if (users.find(_rqAccountName.accountname()) != users.end()) // 检查用户是否存在
 					{
-						_tmpRPAccountName = _tmpRQAccountName;
+						users.erase(_rqAccountName.accountname());
 
-						// 服务器删除该用户数据
-						users.erase(_tmpRQAccountName.accountname());
+						// 创建回复数据
+						CommonMsg rp;
+						rp.set_issucess(true);
+						ostringstream str;
+						str << "DeleteUsers:" << _rqAccountName.accountname() << endl;
+						rp.set_msg(str.str());
 
 						// 回复一次stream数据
-						_isNeedRead = false;
-						_requester.Write(_tmpRPAccountName, this);
+						_isWriteDone = false;
+						_requester.Write(rp, this);						
 					}
 					else
 					{
-						// 继续等待数据
-						_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
+						// 创建回复数据
+						CommonMsg rp;
+						rp.set_issucess(false);
+						ostringstream str;
+						str << "DeleteUsers:not found " << _rqAccountName.accountname() << endl;
+						rp.set_msg(str.str());
+
+						// 回复一次stream数据
+						_isWriteDone = false;
+						_requester.Write(rp, this);
 					}
 				}
 				else
 				{
 					// 继续等待数据
-					_isNeedRead = true;
-					_requester.Read(&_tmpRQAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
+					_isWriteDone = true;
+					_requester.Read(&_rqAccountName, this); // 存入临时成员变量tmpAccountName中，不能使用临时变量！
 				}
 			}
 		}

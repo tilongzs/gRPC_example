@@ -59,20 +59,33 @@ struct UserAccountNameDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UserAccountNameDefaultTypeInternal _UserAccountName_default_instance_;
-constexpr CommonCount::CommonCount(
+constexpr CommonMsg::CommonMsg(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : count_(0u){}
-struct CommonCountDefaultTypeInternal {
-  constexpr CommonCountDefaultTypeInternal()
+  : msg_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , issucess_(false){}
+struct CommonMsgDefaultTypeInternal {
+  constexpr CommonMsgDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~CommonCountDefaultTypeInternal() {}
+  ~CommonMsgDefaultTypeInternal() {}
   union {
-    CommonCount _instance;
+    CommonMsg _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CommonCountDefaultTypeInternal _CommonCount_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CommonMsgDefaultTypeInternal _CommonMsg_default_instance_;
+constexpr CommonNumber::CommonNumber(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : num_(0u){}
+struct CommonNumberDefaultTypeInternal {
+  constexpr CommonNumberDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~CommonNumberDefaultTypeInternal() {}
+  union {
+    CommonNumber _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CommonNumberDefaultTypeInternal _CommonNumber_default_instance_;
 }  // namespace TestGRPC
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fUser_2fUser_2eproto[4];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_proto_2fUser_2fUser_2eproto[5];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_proto_2fUser_2fUser_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_proto_2fUser_2fUser_2eproto = nullptr;
 
@@ -100,24 +113,33 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_proto_2fUser_2fUser_2eproto::o
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::TestGRPC::UserAccountName, accountname_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonCount, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonMsg, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonCount, count_),
+  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonMsg, issucess_),
+  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonMsg, msg_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonNumber, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::TestGRPC::CommonNumber, num_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::TestGRPC::User)},
   { 10, -1, sizeof(::TestGRPC::UserRole)},
   { 16, -1, sizeof(::TestGRPC::UserAccountName)},
-  { 22, -1, sizeof(::TestGRPC::CommonCount)},
+  { 22, -1, sizeof(::TestGRPC::CommonMsg)},
+  { 29, -1, sizeof(::TestGRPC::CommonNumber)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_User_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_UserRole_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_UserAccountName_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_CommonCount_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_CommonMsg_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::TestGRPC::_CommonNumber_default_instance_),
 };
 
 const char descriptor_table_protodef_proto_2fUser_2fUser_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -126,20 +148,21 @@ const char descriptor_table_protodef_proto_2fUser_2fUser_2eproto[] PROTOBUF_SECT
   "(\t\022\020\n\010nickName\030\003 \001(\t\022\013\n\003age\030\004 \001(\r\022 \n\010use"
   "rRole\030\005 \001(\0162\016.TestGRPC.Role\"(\n\010UserRole\022"
   "\034\n\004role\030\001 \001(\0162\016.TestGRPC.Role\"&\n\017UserAcc"
-  "ountName\022\023\n\013accountName\030\001 \001(\t\"\034\n\013CommonC"
-  "ount\022\r\n\005count\030\001 \001(\r*\033\n\004Role\022\010\n\004USER\020\000\022\t\n"
-  "\005ADMIN\020\0012\201\002\n\013UserService\0226\n\007GetUser\022\031.Te"
-  "stGRPC.UserAccountName\032\016.TestGRPC.User\"\000"
-  "\0228\n\016GetUsersByRole\022\022.TestGRPC.UserRole\032\016"
-  ".TestGRPC.User\"\0000\001\0225\n\010AddUsers\022\016.TestGRP"
-  "C.User\032\025.TestGRPC.CommonCount\"\000(\001\022I\n\013Del"
-  "eteUsers\022\031.TestGRPC.UserAccountName\032\031.Te"
-  "stGRPC.UserAccountName\"\000(\0010\001b\006proto3"
+  "ountName\022\023\n\013accountName\030\001 \001(\t\"*\n\tCommonM"
+  "sg\022\020\n\010isSucess\030\001 \001(\010\022\013\n\003msg\030\002 \001(\t\"\033\n\014Com"
+  "monNumber\022\013\n\003num\030\001 \001(\r*\033\n\004Role\022\010\n\004USER\020\000"
+  "\022\t\n\005ADMIN\020\0012\374\001\n\013UserService\0226\n\007GetUser\022\031"
+  ".TestGRPC.UserAccountName\032\016.TestGRPC.Use"
+  "r\"\000\0228\n\016GetUsersByRole\022\022.TestGRPC.UserRol"
+  "e\032\016.TestGRPC.User\"\0000\001\0226\n\010AddUsers\022\016.Test"
+  "GRPC.User\032\026.TestGRPC.CommonNumber\"\000(\001\022C\n"
+  "\013DeleteUsers\022\031.TestGRPC.UserAccountName\032"
+  "\023.TestGRPC.CommonMsg\"\000(\0010\001b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_proto_2fUser_2fUser_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_proto_2fUser_2fUser_2eproto = {
-  false, false, 556, descriptor_table_protodef_proto_2fUser_2fUser_2eproto, "proto/User/User.proto", 
-  &descriptor_table_proto_2fUser_2fUser_2eproto_once, nullptr, 0, 4,
+  false, false, 594, descriptor_table_protodef_proto_2fUser_2fUser_2eproto, "proto/User/User.proto", 
+  &descriptor_table_proto_2fUser_2fUser_2eproto_once, nullptr, 0, 5,
   schemas, file_default_instances, TableStruct_proto_2fUser_2fUser_2eproto::offsets,
   file_level_metadata_proto_2fUser_2fUser_2eproto, file_level_enum_descriptors_proto_2fUser_2fUser_2eproto, file_level_service_descriptors_proto_2fUser_2fUser_2eproto,
 };
@@ -898,68 +921,85 @@ void UserAccountName::InternalSwap(UserAccountName* other) {
 
 // ===================================================================
 
-class CommonCount::_Internal {
+class CommonMsg::_Internal {
  public:
 };
 
-CommonCount::CommonCount(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+CommonMsg::CommonMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:TestGRPC.CommonCount)
+  // @@protoc_insertion_point(arena_constructor:TestGRPC.CommonMsg)
 }
-CommonCount::CommonCount(const CommonCount& from)
+CommonMsg::CommonMsg(const CommonMsg& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  count_ = from.count_;
-  // @@protoc_insertion_point(copy_constructor:TestGRPC.CommonCount)
+  msg_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_msg().empty()) {
+    msg_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_msg(), 
+      GetArena());
+  }
+  issucess_ = from.issucess_;
+  // @@protoc_insertion_point(copy_constructor:TestGRPC.CommonMsg)
 }
 
-void CommonCount::SharedCtor() {
-count_ = 0u;
+void CommonMsg::SharedCtor() {
+msg_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+issucess_ = false;
 }
 
-CommonCount::~CommonCount() {
-  // @@protoc_insertion_point(destructor:TestGRPC.CommonCount)
+CommonMsg::~CommonMsg() {
+  // @@protoc_insertion_point(destructor:TestGRPC.CommonMsg)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void CommonCount::SharedDtor() {
+void CommonMsg::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  msg_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
-void CommonCount::ArenaDtor(void* object) {
-  CommonCount* _this = reinterpret_cast< CommonCount* >(object);
+void CommonMsg::ArenaDtor(void* object) {
+  CommonMsg* _this = reinterpret_cast< CommonMsg* >(object);
   (void)_this;
 }
-void CommonCount::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+void CommonMsg::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
 }
-void CommonCount::SetCachedSize(int size) const {
+void CommonMsg::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
 
-void CommonCount::Clear() {
-// @@protoc_insertion_point(message_clear_start:TestGRPC.CommonCount)
+void CommonMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:TestGRPC.CommonMsg)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  count_ = 0u;
+  msg_.ClearToEmpty();
+  issucess_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* CommonCount::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* CommonMsg::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // uint32 count = 1;
+      // bool isSucess = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          issucess_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string msg = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_msg();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "TestGRPC.CommonMsg.msg"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -985,39 +1025,54 @@ failure:
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* CommonCount::_InternalSerialize(
+::PROTOBUF_NAMESPACE_ID::uint8* CommonMsg::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:TestGRPC.CommonCount)
+  // @@protoc_insertion_point(serialize_to_array_start:TestGRPC.CommonMsg)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 count = 1;
-  if (this->count() != 0) {
+  // bool isSucess = 1;
+  if (this->issucess() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_count(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_issucess(), target);
+  }
+
+  // string msg = 2;
+  if (this->msg().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_msg().data(), static_cast<int>(this->_internal_msg().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "TestGRPC.CommonMsg.msg");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_msg(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:TestGRPC.CommonCount)
+  // @@protoc_insertion_point(serialize_to_array_end:TestGRPC.CommonMsg)
   return target;
 }
 
-size_t CommonCount::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:TestGRPC.CommonCount)
+size_t CommonMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TestGRPC.CommonMsg)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 count = 1;
-  if (this->count() != 0) {
+  // string msg = 2;
+  if (this->msg().size() > 0) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_count());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_msg());
+  }
+
+  // bool isSucess = 1;
+  if (this->issucess() != 0) {
+    total_size += 1 + 1;
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1029,58 +1084,251 @@ size_t CommonCount::ByteSizeLong() const {
   return total_size;
 }
 
-void CommonCount::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:TestGRPC.CommonCount)
+void CommonMsg::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TestGRPC.CommonMsg)
   GOOGLE_DCHECK_NE(&from, this);
-  const CommonCount* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<CommonCount>(
+  const CommonMsg* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<CommonMsg>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestGRPC.CommonCount)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestGRPC.CommonMsg)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestGRPC.CommonCount)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestGRPC.CommonMsg)
     MergeFrom(*source);
   }
 }
 
-void CommonCount::MergeFrom(const CommonCount& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:TestGRPC.CommonCount)
+void CommonMsg::MergeFrom(const CommonMsg& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TestGRPC.CommonMsg)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.count() != 0) {
-    _internal_set_count(from._internal_count());
+  if (from.msg().size() > 0) {
+    _internal_set_msg(from._internal_msg());
+  }
+  if (from.issucess() != 0) {
+    _internal_set_issucess(from._internal_issucess());
   }
 }
 
-void CommonCount::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:TestGRPC.CommonCount)
+void CommonMsg::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TestGRPC.CommonMsg)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void CommonCount::CopyFrom(const CommonCount& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:TestGRPC.CommonCount)
+void CommonMsg::CopyFrom(const CommonMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TestGRPC.CommonMsg)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool CommonCount::IsInitialized() const {
+bool CommonMsg::IsInitialized() const {
   return true;
 }
 
-void CommonCount::InternalSwap(CommonCount* other) {
+void CommonMsg::InternalSwap(CommonMsg* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  swap(count_, other->count_);
+  msg_.Swap(&other->msg_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+  swap(issucess_, other->issucess_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata CommonCount::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata CommonMsg::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+class CommonNumber::_Internal {
+ public:
+};
+
+CommonNumber::CommonNumber(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
+  // @@protoc_insertion_point(arena_constructor:TestGRPC.CommonNumber)
+}
+CommonNumber::CommonNumber(const CommonNumber& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  num_ = from.num_;
+  // @@protoc_insertion_point(copy_constructor:TestGRPC.CommonNumber)
+}
+
+void CommonNumber::SharedCtor() {
+num_ = 0u;
+}
+
+CommonNumber::~CommonNumber() {
+  // @@protoc_insertion_point(destructor:TestGRPC.CommonNumber)
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+void CommonNumber::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
+}
+
+void CommonNumber::ArenaDtor(void* object) {
+  CommonNumber* _this = reinterpret_cast< CommonNumber* >(object);
+  (void)_this;
+}
+void CommonNumber::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void CommonNumber::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void CommonNumber::Clear() {
+// @@protoc_insertion_point(message_clear_start:TestGRPC.CommonNumber)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  num_ = 0u;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* CommonNumber::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // uint32 num = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          num_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* CommonNumber::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TestGRPC.CommonNumber)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 num = 1;
+  if (this->num() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_num(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TestGRPC.CommonNumber)
+  return target;
+}
+
+size_t CommonNumber::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TestGRPC.CommonNumber)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint32 num = 1;
+  if (this->num() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_num());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CommonNumber::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TestGRPC.CommonNumber)
+  GOOGLE_DCHECK_NE(&from, this);
+  const CommonNumber* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<CommonNumber>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TestGRPC.CommonNumber)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TestGRPC.CommonNumber)
+    MergeFrom(*source);
+  }
+}
+
+void CommonNumber::MergeFrom(const CommonNumber& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TestGRPC.CommonNumber)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.num() != 0) {
+    _internal_set_num(from._internal_num());
+  }
+}
+
+void CommonNumber::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TestGRPC.CommonNumber)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CommonNumber::CopyFrom(const CommonNumber& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TestGRPC.CommonNumber)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CommonNumber::IsInitialized() const {
+  return true;
+}
+
+void CommonNumber::InternalSwap(CommonNumber* other) {
+  using std::swap;
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  swap(num_, other->num_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata CommonNumber::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -1097,8 +1345,11 @@ template<> PROTOBUF_NOINLINE ::TestGRPC::UserRole* Arena::CreateMaybeMessage< ::
 template<> PROTOBUF_NOINLINE ::TestGRPC::UserAccountName* Arena::CreateMaybeMessage< ::TestGRPC::UserAccountName >(Arena* arena) {
   return Arena::CreateMessageInternal< ::TestGRPC::UserAccountName >(arena);
 }
-template<> PROTOBUF_NOINLINE ::TestGRPC::CommonCount* Arena::CreateMaybeMessage< ::TestGRPC::CommonCount >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::TestGRPC::CommonCount >(arena);
+template<> PROTOBUF_NOINLINE ::TestGRPC::CommonMsg* Arena::CreateMaybeMessage< ::TestGRPC::CommonMsg >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::TestGRPC::CommonMsg >(arena);
+}
+template<> PROTOBUF_NOINLINE ::TestGRPC::CommonNumber* Arena::CreateMaybeMessage< ::TestGRPC::CommonNumber >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::TestGRPC::CommonNumber >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

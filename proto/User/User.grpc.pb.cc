@@ -80,36 +80,36 @@ void UserService::Stub::experimental_async::GetUsersByRole(::grpc::ClientContext
   return ::grpc::internal::ClientAsyncReaderFactory< ::TestGRPC::User>::Create(channel_.get(), cq, rpcmethod_GetUsersByRole_, context, request, false, nullptr);
 }
 
-::grpc::ClientWriter< ::TestGRPC::User>* UserService::Stub::AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response) {
+::grpc::ClientWriter< ::TestGRPC::User>* UserService::Stub::AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response) {
   return ::grpc::internal::ClientWriterFactory< ::TestGRPC::User>::Create(channel_.get(), rpcmethod_AddUsers_, context, response);
 }
 
-void UserService::Stub::experimental_async::AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) {
+void UserService::Stub::experimental_async::AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) {
   ::grpc::internal::ClientCallbackWriterFactory< ::TestGRPC::User>::Create(stub_->channel_.get(), stub_->rpcmethod_AddUsers_, context, response, reactor);
 }
 
-::grpc::ClientAsyncWriter< ::TestGRPC::User>* UserService::Stub::AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq, void* tag) {
+::grpc::ClientAsyncWriter< ::TestGRPC::User>* UserService::Stub::AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq, void* tag) {
   return ::grpc::internal::ClientAsyncWriterFactory< ::TestGRPC::User>::Create(channel_.get(), cq, rpcmethod_AddUsers_, context, response, true, tag);
 }
 
-::grpc::ClientAsyncWriter< ::TestGRPC::User>* UserService::Stub::PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncWriter< ::TestGRPC::User>* UserService::Stub::PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq) {
   return ::grpc::internal::ClientAsyncWriterFactory< ::TestGRPC::User>::Create(channel_.get(), cq, rpcmethod_AddUsers_, context, response, false, nullptr);
 }
 
-::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* UserService::Stub::DeleteUsersRaw(::grpc::ClientContext* context) {
-  return ::grpc::internal::ClientReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>::Create(channel_.get(), rpcmethod_DeleteUsers_, context);
+::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* UserService::Stub::DeleteUsersRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>::Create(channel_.get(), rpcmethod_DeleteUsers_, context);
 }
 
-void UserService::Stub::experimental_async::DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>* reactor) {
-  ::grpc::internal::ClientCallbackReaderWriterFactory< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>::Create(stub_->channel_.get(), stub_->rpcmethod_DeleteUsers_, context, reactor);
+void UserService::Stub::experimental_async::DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>::Create(stub_->channel_.get(), stub_->rpcmethod_DeleteUsers_, context, reactor);
 }
 
-::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* UserService::Stub::AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>::Create(channel_.get(), cq, rpcmethod_DeleteUsers_, context, true, tag);
+::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* UserService::Stub::AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>::Create(channel_.get(), cq, rpcmethod_DeleteUsers_, context, true, tag);
 }
 
-::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* UserService::Stub::PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>::Create(channel_.get(), cq, rpcmethod_DeleteUsers_, context, false, nullptr);
+::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* UserService::Stub::PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>::Create(channel_.get(), cq, rpcmethod_DeleteUsers_, context, false, nullptr);
 }
 
 UserService::Service::Service() {
@@ -136,20 +136,20 @@ UserService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       UserService_method_names[2],
       ::grpc::internal::RpcMethod::CLIENT_STREAMING,
-      new ::grpc::internal::ClientStreamingHandler< UserService::Service, ::TestGRPC::User, ::TestGRPC::CommonCount>(
+      new ::grpc::internal::ClientStreamingHandler< UserService::Service, ::TestGRPC::User, ::TestGRPC::CommonNumber>(
           [](UserService::Service* service,
              ::grpc::ServerContext* ctx,
              ::grpc::ServerReader<::TestGRPC::User>* reader,
-             ::TestGRPC::CommonCount* resp) {
+             ::TestGRPC::CommonNumber* resp) {
                return service->AddUsers(ctx, reader, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       UserService_method_names[3],
       ::grpc::internal::RpcMethod::BIDI_STREAMING,
-      new ::grpc::internal::BidiStreamingHandler< UserService::Service, ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>(
+      new ::grpc::internal::BidiStreamingHandler< UserService::Service, ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>(
           [](UserService::Service* service,
              ::grpc::ServerContext* ctx,
-             ::grpc::ServerReaderWriter<::TestGRPC::UserAccountName,
+             ::grpc::ServerReaderWriter<::TestGRPC::CommonMsg,
              ::TestGRPC::UserAccountName>* stream) {
                return service->DeleteUsers(ctx, stream);
              }, this)));
@@ -172,14 +172,14 @@ UserService::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status UserService::Service::AddUsers(::grpc::ServerContext* context, ::grpc::ServerReader< ::TestGRPC::User>* reader, ::TestGRPC::CommonCount* response) {
+::grpc::Status UserService::Service::AddUsers(::grpc::ServerContext* context, ::grpc::ServerReader< ::TestGRPC::User>* reader, ::TestGRPC::CommonNumber* response) {
   (void) context;
   (void) reader;
   (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status UserService::Service::DeleteUsers(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* stream) {
+::grpc::Status UserService::Service::DeleteUsers(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* stream) {
   (void) context;
   (void) stream;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");

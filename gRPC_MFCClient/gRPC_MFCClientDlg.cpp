@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CgRPCMFCClientDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_AsyncGetUsersByRole, &CgRPCMFCClientDlg::OnBnClickedButtonAsyncGetUsersByRole)
 	ON_BN_CLICKED(IDC_BUTTON_AsyncAddUsers, &CgRPCMFCClientDlg::OnBnClickedButtonAsyncAddusers)
 	ON_BN_CLICKED(IDC_BUTTON_AsyncDeleteUsers, &CgRPCMFCClientDlg::OnBnClickedButtonAsyncdeleteusers)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 BOOL CgRPCMFCClientDlg::OnInitDialog()
@@ -77,6 +78,16 @@ void CgRPCMFCClientDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+}
+
+void CgRPCMFCClientDlg::OnClose()
+{
+	if (_user_AsyncRPCClient)
+	{
+		_user_AsyncRPCClient->Shutdown();
+	}
+
+	CDialogEx::OnClose();
 }
 
 void CgRPCMFCClientDlg::AppendMsg(const WCHAR* msg)
@@ -313,18 +324,8 @@ void CgRPCMFCClientDlg::OnBnClickedButtonDeleteusers()
 		count--;
 	}
 
-	shared_ptr<vector<UserAccountName>> deletedUserAccountName = _user_RPCClient->DeleteUsers(names);
-	if (deletedUserAccountName)
-	{
-		USES_CONVERSION;
-		CStringA strTmp;
-		strTmp.Format("批量删除%d个用户成功", deletedUserAccountName->size());
-		AppendMsg(A2W(strTmp));
-	}
-	else
-	{
-		AppendMsg(L"删除用户失败");
-	}
+	_user_RPCClient->DeleteUsers(names);
+	AppendMsg(L"删除用户完成");
 }
 
 void CgRPCMFCClientDlg::OnBnClickedButtonAsyncdeleteusers()
@@ -396,7 +397,7 @@ void CgRPCMFCClientDlg::OnAddUsersComplete(bool isSucceed, int count)
 	if (isSucceed)
 	{
 		CString strTmp;
-		strTmp.Format(L"批量增加%d个用户 完成", count);
+		strTmp.Format(L"批量增加用户完成，当前共%d个用户", count);
 		AppendMsg(strTmp);
 	}
 	else
@@ -405,22 +406,14 @@ void CgRPCMFCClientDlg::OnAddUsersComplete(bool isSucceed, int count)
 	}
 }
 
-void CgRPCMFCClientDlg::OnDeleteUsers(shared_ptr<string> userAccountName)
+void CgRPCMFCClientDlg::OnDeleteUsers(bool isSucceed, shared_ptr<string> msg)
 {
 	USES_CONVERSION;
-	CStringA strTmp;
-	strTmp.Format("删除用户:%s 成功", userAccountName->c_str());
-	AppendMsg(A2W(strTmp));
+	AppendMsg(A2W(msg->c_str()));
 }
 
-void CgRPCMFCClientDlg::OnDeleteUsersComplete(bool isSucceed)
+void CgRPCMFCClientDlg::OnDeleteUsersComplete()
 {
-	if (isSucceed)
-	{
-		AppendMsg(L"批量删除用户 完成");
-	}
-	else
-	{
-		AppendMsg(L"批量删除用户 失败");
-	}
+	AppendMsg(L"批量删除用户 完成");
 }
+

@@ -84,7 +84,7 @@ shared_ptr<vector<User>> CUser_RPCClient::GetUsersByRole(const Role& role)
 shared_ptr<unsigned> CUser_RPCClient::AddUsers(const shared_ptr<vector<User>>& users)
 {
 	// 接收服务器返回的回复数据
-	CommonCount userCount;
+	CommonNumber userCount;
 	ClientContext context;// 一次性使用，不能作为成员变量重复使用，否则会导致异常！
 
 	// 创建请求数据
@@ -114,7 +114,7 @@ shared_ptr<unsigned> CUser_RPCClient::AddUsers(const shared_ptr<vector<User>>& u
 	Status status = writer->Finish(); // 所有数据发送完毕
 	if (status.ok() && !hasError)
 	{
-		return make_shared<unsigned>(userCount.count());
+		return make_shared<unsigned>(userCount.num());
 	}
 	else
 	{
@@ -122,11 +122,11 @@ shared_ptr<unsigned> CUser_RPCClient::AddUsers(const shared_ptr<vector<User>>& u
 	}
 }
 
-shared_ptr<vector<UserAccountName>> CUser_RPCClient::DeleteUsers(shared_ptr<vector<UserAccountName>> accountNames)
+void CUser_RPCClient::DeleteUsers(shared_ptr<vector<UserAccountName>> accountNames)
 {
 	// 创建读写器
 	ClientContext context;
-	shared_ptr<ClientReaderWriter<UserAccountName, UserAccountName>> stream(_stub->DeleteUsers(&context));
+	auto stream = _stub->DeleteUsers(&context);
 
 	// 发送请求
 	bool hasError = false;
@@ -151,23 +151,19 @@ shared_ptr<vector<UserAccountName>> CUser_RPCClient::DeleteUsers(shared_ptr<vect
 
 	// 读取回复
 	shared_ptr<vector<UserAccountName>> deletedUserAccountName = make_shared<vector<UserAccountName>>();
-	UserAccountName reply;
+	CommonMsg reply;
 	while (stream->Read(&reply))
 	{
 		ostringstream str;
-		str << GetTimeStr() << "CUser_RPCClient::DeleteUsers() Read:" << reply.accountname() << endl;
+		if (reply.issucess())
+		{
+			str << GetTimeStr() << "CUser_RPCClient::DeleteUsers() success"  << endl;
+		}
+		else
+		{
+			str << GetTimeStr() << "CUser_RPCClient::DeleteUsers() failed:" << reply.msg() << endl;
+		}
+	
 		OutputDebugStringA(str.str().c_str());
-
-		deletedUserAccountName->push_back(move(reply));
-	}
-
-	Status status = stream->Finish(); // 所有数据读取完毕
-	if (status.ok() && !hasError)
-	{
-		return deletedUserAccountName;
-	}
-	else
-	{
-		return nullptr;
 	}
 }

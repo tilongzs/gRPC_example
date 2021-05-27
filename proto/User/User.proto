@@ -10,10 +10,10 @@ service UserService{
  rpc GetUsersByRole(UserRole) returns (stream User){}
 
  // 批量增加新用户，返回服务器用户总数
- rpc AddUsers(stream User) returns (CommonCount){}
+ rpc AddUsers(stream User) returns (CommonNumber){}
 
- // 批量删除用户，返回删除成功的用户名
- rpc DeleteUsers(stream UserAccountName) returns (stream UserAccountName){}
+ // 批量删除用户，返回消息
+ rpc DeleteUsers(stream UserAccountName) returns (stream CommonMsg){}
 }
 
 // 用户信息
@@ -41,8 +41,13 @@ message UserAccountName{
     string accountName = 1;	// 用户名（英文、数字、下划线、@）
 }
 
-// 服务器用户总数
-message CommonCount{
-    uint32 count= 1;
+// 通用消息
+message CommonMsg{
+	bool isSucess = 1;
+	string msg = 2;
 }
 
+// 通用数字
+message CommonNumber{
+	uint32 num = 1;
+}

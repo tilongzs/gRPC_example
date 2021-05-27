@@ -55,24 +55,24 @@ class UserService final {
       return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::TestGRPC::User>>(PrepareAsyncGetUsersByRoleRaw(context, request, cq));
     }
     // 批量增加新用户，返回服务器用户总数
-    std::unique_ptr< ::grpc::ClientWriterInterface< ::TestGRPC::User>> AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response) {
+    std::unique_ptr< ::grpc::ClientWriterInterface< ::TestGRPC::User>> AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response) {
       return std::unique_ptr< ::grpc::ClientWriterInterface< ::TestGRPC::User>>(AddUsersRaw(context, response));
     }
-    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>> AsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq, void* tag) {
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>> AsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq, void* tag) {
       return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>>(AsyncAddUsersRaw(context, response, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>> PrepareAsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>> PrepareAsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>>(PrepareAsyncAddUsersRaw(context, response, cq));
     }
-    // 批量删除用户，返回删除成功的用户名
-    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> DeleteUsers(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(DeleteUsersRaw(context));
+    // 批量删除用户，返回消息
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> DeleteUsers(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(DeleteUsersRaw(context));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> AsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(AsyncDeleteUsersRaw(context, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> AsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(AsyncDeleteUsersRaw(context, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> PrepareAsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(PrepareAsyncDeleteUsersRaw(context, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> PrepareAsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(PrepareAsyncDeleteUsersRaw(context, cq));
     }
     class experimental_async_interface {
      public:
@@ -92,15 +92,15 @@ class UserService final {
       #endif
       // 批量增加新用户，返回服务器用户总数
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::ClientWriteReactor< ::TestGRPC::User>* reactor) = 0;
+      virtual void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::ClientWriteReactor< ::TestGRPC::User>* reactor) = 0;
       #else
-      virtual void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) = 0;
+      virtual void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) = 0;
       #endif
-      // 批量删除用户，返回删除成功的用户名
+      // 批量删除用户，返回消息
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void DeleteUsers(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>* reactor) = 0;
+      virtual void DeleteUsers(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>* reactor) = 0;
       #else
-      virtual void DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>* reactor) = 0;
+      virtual void DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>* reactor) = 0;
       #endif
     };
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -116,12 +116,12 @@ class UserService final {
     virtual ::grpc::ClientReaderInterface< ::TestGRPC::User>* GetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::TestGRPC::User>* AsyncGetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::TestGRPC::User>* PrepareAsyncGetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientWriterInterface< ::TestGRPC::User>* AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response) = 0;
-    virtual ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>* AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>* PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* DeleteUsersRaw(::grpc::ClientContext* context) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientWriterInterface< ::TestGRPC::User>* AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>* AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::TestGRPC::User>* PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* DeleteUsersRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -142,23 +142,23 @@ class UserService final {
     std::unique_ptr< ::grpc::ClientAsyncReader< ::TestGRPC::User>> PrepareAsyncGetUsersByRole(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReader< ::TestGRPC::User>>(PrepareAsyncGetUsersByRoleRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientWriter< ::TestGRPC::User>> AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response) {
+    std::unique_ptr< ::grpc::ClientWriter< ::TestGRPC::User>> AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response) {
       return std::unique_ptr< ::grpc::ClientWriter< ::TestGRPC::User>>(AddUsersRaw(context, response));
     }
-    std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>> AsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq, void* tag) {
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>> AsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq, void* tag) {
       return std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>>(AsyncAddUsersRaw(context, response, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>> PrepareAsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>> PrepareAsyncAddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncWriter< ::TestGRPC::User>>(PrepareAsyncAddUsersRaw(context, response, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> DeleteUsers(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(DeleteUsersRaw(context));
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> DeleteUsers(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(DeleteUsersRaw(context));
     }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> AsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(AsyncDeleteUsersRaw(context, cq, tag));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> AsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(AsyncDeleteUsersRaw(context, cq, tag));
     }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>> PrepareAsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>>(PrepareAsyncDeleteUsersRaw(context, cq));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>> PrepareAsyncDeleteUsers(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>>(PrepareAsyncDeleteUsersRaw(context, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
@@ -175,14 +175,14 @@ class UserService final {
       void GetUsersByRole(::grpc::ClientContext* context, const ::TestGRPC::UserRole* request, ::grpc::experimental::ClientReadReactor< ::TestGRPC::User>* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::ClientWriteReactor< ::TestGRPC::User>* reactor) override;
+      void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::ClientWriteReactor< ::TestGRPC::User>* reactor) override;
       #else
-      void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) override;
+      void AddUsers(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::experimental::ClientWriteReactor< ::TestGRPC::User>* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void DeleteUsers(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>* reactor) override;
+      void DeleteUsers(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>* reactor) override;
       #else
-      void DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::UserAccountName>* reactor) override;
+      void DeleteUsers(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::TestGRPC::UserAccountName,::TestGRPC::CommonMsg>* reactor) override;
       #endif
      private:
       friend class Stub;
@@ -200,12 +200,12 @@ class UserService final {
     ::grpc::ClientReader< ::TestGRPC::User>* GetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request) override;
     ::grpc::ClientAsyncReader< ::TestGRPC::User>* AsyncGetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::TestGRPC::User>* PrepareAsyncGetUsersByRoleRaw(::grpc::ClientContext* context, const ::TestGRPC::UserRole& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientWriter< ::TestGRPC::User>* AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response) override;
-    ::grpc::ClientAsyncWriter< ::TestGRPC::User>* AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncWriter< ::TestGRPC::User>* PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonCount* response, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* DeleteUsersRaw(::grpc::ClientContext* context) override;
-    ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientWriter< ::TestGRPC::User>* AddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response) override;
+    ::grpc::ClientAsyncWriter< ::TestGRPC::User>* AsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncWriter< ::TestGRPC::User>* PrepareAsyncAddUsersRaw(::grpc::ClientContext* context, ::TestGRPC::CommonNumber* response, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* DeleteUsersRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* AsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* PrepareAsyncDeleteUsersRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetUser_;
     const ::grpc::internal::RpcMethod rpcmethod_GetUsersByRole_;
     const ::grpc::internal::RpcMethod rpcmethod_AddUsers_;
@@ -222,9 +222,9 @@ class UserService final {
     // 获取指定角色的所有用户信息
     virtual ::grpc::Status GetUsersByRole(::grpc::ServerContext* context, const ::TestGRPC::UserRole* request, ::grpc::ServerWriter< ::TestGRPC::User>* writer);
     // 批量增加新用户，返回服务器用户总数
-    virtual ::grpc::Status AddUsers(::grpc::ServerContext* context, ::grpc::ServerReader< ::TestGRPC::User>* reader, ::TestGRPC::CommonCount* response);
-    // 批量删除用户，返回删除成功的用户名
-    virtual ::grpc::Status DeleteUsers(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* stream);
+    virtual ::grpc::Status AddUsers(::grpc::ServerContext* context, ::grpc::ServerReader< ::TestGRPC::User>* reader, ::TestGRPC::CommonNumber* response);
+    // 批量删除用户，返回消息
+    virtual ::grpc::Status DeleteUsers(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* stream);
   };
   template <class BaseClass>
   class WithAsyncMethod_GetUser : public BaseClass {
@@ -278,11 +278,11 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonCount* /*response*/) override {
+    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonNumber* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestAddUsers(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::TestGRPC::CommonCount, ::TestGRPC::User>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestAddUsers(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::TestGRPC::CommonNumber, ::TestGRPC::User>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncClientStreaming(2, context, reader, new_call_cq, notification_cq, tag);
     }
   };
@@ -298,11 +298,11 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* /*stream*/)  override {
+    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestDeleteUsers(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestDeleteUsers(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncBidiStreaming(3, context, stream, new_call_cq, notification_cq, tag);
     }
   };
@@ -404,29 +404,29 @@ class UserService final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(2,
-          new ::grpc::internal::CallbackClientStreamingHandler< ::TestGRPC::User, ::TestGRPC::CommonCount>(
+          new ::grpc::internal::CallbackClientStreamingHandler< ::TestGRPC::User, ::TestGRPC::CommonNumber>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, ::TestGRPC::CommonCount* response) { return this->AddUsers(context, response); }));
+                     context, ::TestGRPC::CommonNumber* response) { return this->AddUsers(context, response); }));
     }
     ~ExperimentalWithCallbackMethod_AddUsers() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonCount* /*response*/) override {
+    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonNumber* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerReadReactor< ::TestGRPC::User>* AddUsers(
-      ::grpc::CallbackServerContext* /*context*/, ::TestGRPC::CommonCount* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, ::TestGRPC::CommonNumber* /*response*/)
     #else
     virtual ::grpc::experimental::ServerReadReactor< ::TestGRPC::User>* AddUsers(
-      ::grpc::experimental::CallbackServerContext* /*context*/, ::TestGRPC::CommonCount* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, ::TestGRPC::CommonNumber* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -442,7 +442,7 @@ class UserService final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(3,
-          new ::grpc::internal::CallbackBidiHandler< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>(
+          new ::grpc::internal::CallbackBidiHandler< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
@@ -455,15 +455,15 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* /*stream*/)  override {
+    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-    virtual ::grpc::ServerBidiReactor< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* DeleteUsers(
+    virtual ::grpc::ServerBidiReactor< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* DeleteUsers(
       ::grpc::CallbackServerContext* /*context*/)
     #else
-    virtual ::grpc::experimental::ServerBidiReactor< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* DeleteUsers(
+    virtual ::grpc::experimental::ServerBidiReactor< ::TestGRPC::UserAccountName, ::TestGRPC::CommonMsg>* DeleteUsers(
       ::grpc::experimental::CallbackServerContext* /*context*/)
     #endif
       { return nullptr; }
@@ -519,7 +519,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonCount* /*response*/) override {
+    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonNumber* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -536,7 +536,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* /*stream*/)  override {
+    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -593,7 +593,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonCount* /*response*/) override {
+    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonNumber* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -613,7 +613,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* /*stream*/)  override {
+    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -722,7 +722,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonCount* /*response*/) override {
+    ::grpc::Status AddUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReader< ::TestGRPC::User>* /*reader*/, ::TestGRPC::CommonNumber* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -760,7 +760,7 @@ class UserService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::UserAccountName, ::TestGRPC::UserAccountName>* /*stream*/)  override {
+    ::grpc::Status DeleteUsers(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }

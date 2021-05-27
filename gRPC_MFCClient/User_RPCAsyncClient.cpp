@@ -53,6 +53,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 
 	_stub = UserService::NewStub(_channel);
 
+	_ctsCommon = make_unique<cancellation_token_source>();
 	auto token = _ctsCommon->get_token();
 	task<void> taskProceed([&, token]
 	{
@@ -86,8 +87,12 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 
 void CAsyncRPCClient::Shutdown()
 {
-	_cq.Shutdown();
-	_ctsCommon->cancel();
+	if (_ctsCommon)
+	{
+		_cq.Shutdown();
+		_ctsCommon->cancel();
+		_ctsCommon = nullptr;
+	}
 }
 
 void CAsyncRPCClient::GetUser(const string& accountName)
@@ -287,7 +292,7 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 	case CallStatus::FINISH:
 	{
 		// 处理收到的回复数据
-		_mainDlg->OnAddUsersComplete(true, _reply.count());
+		_mainDlg->OnAddUsersComplete(true, _reply.num());
 
 		// 应答结束
 		delete this;
@@ -315,7 +320,7 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 	{
 		if (isOK)
 		{
-			// 第一次等待数据
+			// 第一次发送数据
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
@@ -323,16 +328,15 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 				// 发送一次stream数据
 				auto iter = _request->begin();
 				_tag++; // 标记当前发送进度
-				_isNeedRead = false;
+				_isWriteDone = false;
 				_responsder->Write(*iter, this);
 			}
 			else
 			{
-				if (_isNeedRead)
+				if (_isWriteDone)
 				{
 					// 处理接收到的一次stream数据
-					_mainDlg->OnDeleteUsers(make_shared<string>(_reply.accountname()));
-					_deletedUserAccountName.push_back(move(_reply));
+					_mainDlg->OnDeleteUsers(_reply.issucess(), make_shared<string>(_reply.msg()));
 
 					// 发送请求数据
 					auto iter = _request->begin();
@@ -344,21 +348,21 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 					if (iter != _request->end())
 					{
 						_tag++; // 标记当前发送进度
-						_isNeedRead = false;
+						_isWriteDone = false;
 						_responsder->Write(*iter, this);// 发送一次stream数据
 					}
 					else
 					{
 						// 全部请求发送完成
 						_isSendComplete = true;
-						_isNeedRead = false;
+						_isWriteDone = false;
 						_responsder->WritesDone(this); // 结束发送
 					}
 				}
 				else
 				{
 					// 继续等待数据
-					_isNeedRead = true;
+					_isWriteDone = true;
 					_responsder->Read(&_reply, this);
 				}
 			}			
@@ -376,6 +380,7 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 		break;
 	case CallStatus::FINISH:
 	{
+		_mainDlg->OnDeleteUsersComplete();
 		delete this;
 	}
 		break;
