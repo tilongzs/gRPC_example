@@ -27,6 +27,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 {
 	_mainDlg = mainDlg;
 
+	/*
 	auto GetFileString = [&](string extraFilePath)
 	{
 		char buf[MAX_PATH] = { 0 };
@@ -41,15 +42,17 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 		return str;
 	};
 
-	// 创建gRPC channel
-	_channel = grpc::CreateChannel(serverAddr, grpc::InsecureChannelCredentials()); // 监听不需要认证的连接
-	// 增加SSL验证
-// 	grpc::SslCredentialsOptions sslOpts;
-// 	sslOpts.pem_root_certs = GetFileString("ssl/server.crt");
-// 	sslOpts.pem_private_key = GetFileString("ssl/client.key");
-// 	sslOpts.pem_cert_chain = GetFileString("ssl/client.crt");
-// 	auto creds = grpc::SslCredentials(sslOpts);
-// 	_channel = grpc::CreateChannel(serverAddr, creds);
+	// 创建带SSL认证的gRPC channel
+	grpc::SslCredentialsOptions sslOpts;
+	sslOpts.pem_root_certs = GetFileString("ssl/server.crt");
+	sslOpts.pem_private_key = GetFileString("ssl/client.key");
+	sslOpts.pem_cert_chain = GetFileString("ssl/client.crt");
+	auto creds = grpc::SslCredentials(sslOpts);
+	_channel = grpc::CreateChannel(serverAddr, creds);
+	*/
+
+ 	// 创建gRPC channel
+ 	_channel = grpc::CreateChannel(serverAddr, grpc::InsecureChannelCredentials());
 
 	_stub = UserService::NewStub(_channel);
 
