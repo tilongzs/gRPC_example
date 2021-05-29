@@ -32,7 +32,7 @@ protected:
 	CButton _btnRunClient;
 	CButton _btnRunAsyncClient;
 
-	string _serverAddr = "localhost:23351";
+	string _serverAddr = "localhost:23351";	// gRPC在使用TLS/SSL连接时只能用域名不能用IP
 	shared_ptr<Channel> _channel = nullptr;
 	shared_ptr<CUser_RPCClient> _user_RPCClient = nullptr;
 	unique_ptr<CAsyncRPCClient>	_user_AsyncRPCClient = nullptr;
