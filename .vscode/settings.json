@@ -1,7 +1,7 @@
 {
     "protoc": {
         "path": "D:\\SoftwareDevelopment\\vcpkg\\installed\\x64-windows\\tools\\protobuf\\protoc.exe",
-        "compile_on_save": true,
+        "compile_on_save": true,//保存时自动编译
         "options": [
             "--proto_path=${workspaceRoot}",
             "--cpp_out=.",

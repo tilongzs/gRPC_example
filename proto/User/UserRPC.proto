@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "proto/User/User.proto";
+
+package TestGRPC;
+
+service UserService{
+// 根据用户名获取用户信息
+ rpc GetUser(UserAccountName) returns (User){} 
+
+ // 获取指定角色的所有用户信息
+ rpc GetUsersByRole(UserRole) returns (stream User){}
+
+ // 批量增加新用户，返回服务器用户总数
+ rpc AddUsers(stream User) returns (CommonNumber){}
+
+ // 批量删除用户，返回消息
+ rpc DeleteUsers(stream UserAccountName) returns (stream CommonMsg){}
+}

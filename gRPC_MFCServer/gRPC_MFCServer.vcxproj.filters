@@ -48,17 +48,20 @@
     <ClInclude Include="..\proto\helloworld\helloworld.pb.h">
       <Filter>Proto\helloworld</Filter>
     </ClInclude>
-    <ClInclude Include="..\proto\User\User.grpc.pb.h">
-      <Filter>Proto\User</Filter>
-    </ClInclude>
-    <ClInclude Include="..\proto\User\User.pb.h">
-      <Filter>Proto\User</Filter>
-    </ClInclude>
     <ClInclude Include="User_RPCAsyncService.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="User_RPCService.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\proto\User\User.pb.h">
+      <Filter>Proto\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\proto\User\UserRPC.grpc.pb.h">
+      <Filter>Proto\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\proto\User\UserRPC.pb.h">
+      <Filter>Proto\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,10 +86,13 @@
     <ClCompile Include="..\proto\helloworld\helloworld.pb.cc">
       <Filter>Proto\helloworld</Filter>
     </ClCompile>
-    <ClCompile Include="..\proto\User\User.grpc.pb.cc">
+    <ClCompile Include="..\proto\User\User.pb.cc">
       <Filter>Proto\User</Filter>
     </ClCompile>
-    <ClCompile Include="..\proto\User\User.pb.cc">
+    <ClCompile Include="..\proto\User\UserRPC.grpc.pb.cc">
+      <Filter>Proto\User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\proto\User\UserRPC.pb.cc">
       <Filter>Proto\User</Filter>
     </ClCompile>
   </ItemGroup>
@@ -103,6 +109,9 @@
       <Filter>Proto\helloworld</Filter>
     </None>
     <None Include="..\proto\User\User.proto">
+      <Filter>Proto\User</Filter>
+    </None>
+    <None Include="..\proto\User\UserRPC.proto">
       <Filter>Proto\User</Filter>
     </None>
   </ItemGroup>

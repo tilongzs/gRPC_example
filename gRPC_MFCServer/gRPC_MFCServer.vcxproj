@@ -189,8 +189,9 @@
   <ItemGroup>
     <ClInclude Include="..\proto\helloworld\helloworld.grpc.pb.h" />
     <ClInclude Include="..\proto\helloworld\helloworld.pb.h" />
-    <ClInclude Include="..\proto\User\User.grpc.pb.h" />
     <ClInclude Include="..\proto\User\User.pb.h" />
+    <ClInclude Include="..\proto\User\UserRPC.grpc.pb.h" />
+    <ClInclude Include="..\proto\User\UserRPC.pb.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gRPC_MFCServer.h" />
     <ClInclude Include="gRPC_MFCServerDlg.h" />
@@ -207,10 +208,13 @@
     <ClCompile Include="..\proto\helloworld\helloworld.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\proto\User\User.grpc.pb.cc">
+    <ClCompile Include="..\proto\User\User.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\proto\User\User.pb.cc">
+    <ClCompile Include="..\proto\User\UserRPC.grpc.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\proto\User\UserRPC.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="gRPC_MFCServer.cpp" />
@@ -230,6 +234,7 @@
   <ItemGroup>
     <None Include="..\proto\helloworld\helloworld.proto" />
     <None Include="..\proto\User\User.proto" />
+    <None Include="..\proto\User\UserRPC.proto" />
     <None Include="res\gRPCMFCServer.rc2" />
   </ItemGroup>
   <ItemGroup>

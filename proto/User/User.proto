@@ -2,20 +2,6 @@ syntax = "proto3";
 
 package TestGRPC;
 
-service UserService{
-// 根据用户名获取用户信息
- rpc GetUser(UserAccountName) returns (User){} 
-
- // 获取指定角色的所有用户信息
- rpc GetUsersByRole(UserRole) returns (stream User){}
-
- // 批量增加新用户，返回服务器用户总数
- rpc AddUsers(stream User) returns (CommonNumber){}
-
- // 批量删除用户，返回消息
- rpc DeleteUsers(stream UserAccountName) returns (stream CommonMsg){}
-}
-
 // 用户信息
 message User{
 	string accountName = 1;	// 用户名（英文、数字、下划线、@）

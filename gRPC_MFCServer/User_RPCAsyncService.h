@@ -2,7 +2,7 @@
 #include <map>
 #include <grpcpp/grpcpp.h>
 #include <pplx/pplxtasks.h>
-#include "../proto/User/User.grpc.pb.h"
+#include "../proto/User/UserRPC.grpc.pb.h"
 
 using namespace std;
 using namespace Concurrency;

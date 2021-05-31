@@ -2,7 +2,7 @@
 #include <map>
 using namespace std;
 
-#include "../proto/User/User.grpc.pb.h"
+#include "../proto/User/UserRPC.grpc.pb.h"
 
 class CUser_RPCService : public ::TestGRPC::UserService::Service
 {

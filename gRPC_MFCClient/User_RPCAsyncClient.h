@@ -3,7 +3,7 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/client_context.h>
 #include <pplx/pplxtasks.h>
-#include "../proto/User/User.grpc.pb.h"
+#include "../proto/User/UserRPC.grpc.pb.h"
 
 using namespace grpc;
 using namespace TestGRPC;
