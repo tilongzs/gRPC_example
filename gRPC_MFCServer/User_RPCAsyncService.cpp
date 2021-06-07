@@ -332,6 +332,10 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 				else
 				{
 					users.insert(map<string, User>::value_type(accountName, move(_tmpUser))); // 插入新用户
+
+					ostringstream str;
+					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::增加新用户成功：" << accountName.c_str() << endl;
+					OutputDebugStringA(str.str().c_str());
 				}
 
 				// 继续等待数据
