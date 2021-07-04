@@ -328,6 +328,10 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 				if (users.find(accountName) != users.end()) // 检查用户是否已存在
 				{
 					users[accountName].CopyFrom(_tmpUser);	// 更新用户数据
+
+					ostringstream str;
+					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::更新用户成功：" << accountName.c_str() << endl;
+					OutputDebugStringA(str.str().c_str());
 				}
 				else
 				{
