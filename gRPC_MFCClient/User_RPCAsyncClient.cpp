@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "User_RPCAsyncClient.h"
 #include "gRPC_MFCClientDlg.h"
-#include <pplx/pplxtasks.h>
 #include <chrono>
 #include <sstream>
 #include <fstream>

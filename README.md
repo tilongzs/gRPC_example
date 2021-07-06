@@ -5,12 +5,11 @@ gRPC的基本使用演示工程。包含同步模式和异步模式的基本使�
 
 
 #### 安装教程
-通过vcpkg安装，并引用了cpprest库的task并行类。
+通过vcpkg安装gRPC。
 
 - .\vcpkg install grpc
-- .\vcpkg install cpprest
 
-默认使用Debug、X64配置，以及C++17和C17标准编译。
+默认使用Debug、X64配置，以及C++14标准编译。
 
 #### 使用说明
 
