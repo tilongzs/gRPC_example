@@ -13,15 +13,20 @@ using namespace Concurrency;
 class CgRPCMFCClientDlg;
 class CAsyncRPCClient
 {
+public:
+	CAsyncRPCClient(shared_ptr<Channel>& channel)
+		: _stub(UserService::NewStub(channel)) {}
+
 private:
 	CgRPCMFCClientDlg* _mainDlg = nullptr;
 	CompletionQueue		_cq;
 	std::unique_ptr<UserService::Stub> _stub;
-	shared_ptr<Channel> _channel = nullptr;
 	unique_ptr<cancellation_token_source> _ctsCommon = nullptr;
+	task<void> _taskProceed;
+	task<void>	_taskTest;
 
 public:
-	void Run(CgRPCMFCClientDlg* mainDlg, string serverAddr);
+	void Run(CgRPCMFCClientDlg* mainDlg);
 	void Shutdown();
 	void GetUser(const string& accountName);
 	void GetUsersByRole(const Role& role);

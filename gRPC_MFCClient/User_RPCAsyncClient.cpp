@@ -22,7 +22,7 @@ static string GetTimeStr()
 	return str;
 }
 
-void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
+void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg)
 {
 	_mainDlg = mainDlg;
 
@@ -50,14 +50,8 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 	_channel = grpc::CreateChannel(serverAddr, creds);
 	*/
 
- 	// 创建gRPC channel
- 	_channel = grpc::CreateChannel(serverAddr, grpc::InsecureChannelCredentials());
-
-	_stub = UserService::NewStub(_channel);
-
 	_ctsCommon = make_unique<cancellation_token_source>();
-	auto token = _ctsCommon->get_token();
-	task<void> taskProceed([&, token]
+	_taskProceed = task<void>([&]
 	{
 		ostringstream str;
 		str << GetTimeStr() << "CommonAsyncClientCall::RunClient() taskBegin" << endl;
@@ -65,6 +59,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg, string serverAddr)
 
 		void* tag = nullptr;
 		bool ok = false;
+		auto token = _ctsCommon->get_token();
 		while (!token.is_canceled())
 		{
 			if (!_cq.Next(&tag, &ok)) // 阻塞，直至有新的事件
@@ -93,6 +88,7 @@ void CAsyncRPCClient::Shutdown()
 	{
 		_cq.Shutdown();
 		_ctsCommon->cancel();
+		_taskProceed.wait();
 		_ctsCommon = nullptr;
 	}
 }

@@ -36,6 +36,7 @@ protected:
 	shared_ptr<Channel> _channel = nullptr;
 	shared_ptr<CUser_RPCClient> _user_RPCClient = nullptr;
 	unique_ptr<CAsyncRPCClient>	_user_AsyncRPCClient = nullptr;
+	unique_ptr<cancellation_token_source> _ctsCommon = make_unique<cancellation_token_source>();
 
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
@@ -64,4 +65,5 @@ public:
 	void OnAddUsersComplete(bool isSucceed, int count = -1);
 	void OnDeleteUsers(bool isSucceed, shared_ptr<string> msg);
 	void OnDeleteUsersComplete();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

@@ -11,7 +11,7 @@
 #endif
 
 #define WMSG_FUNCTION		WM_USER + 1
-
+#define TIMER_CheckGRPC		1
 
 
 CgRPCMFCClientDlg::CgRPCMFCClientDlg(CWnd* pParent /*=nullptr*/)
@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CgRPCMFCClientDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_AsyncAddUsers, &CgRPCMFCClientDlg::OnBnClickedButtonAsyncAddusers)
 	ON_BN_CLICKED(IDC_BUTTON_AsyncDeleteUsers, &CgRPCMFCClientDlg::OnBnClickedButtonAsyncdeleteusers)
 	ON_WM_CLOSE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 BOOL CgRPCMFCClientDlg::OnInitDialog()
@@ -86,6 +87,9 @@ void CgRPCMFCClientDlg::OnClose()
 	{
 		_user_AsyncRPCClient->Shutdown();
 	}
+
+	KillTimer(TIMER_CheckGRPC);
+	_ctsCommon->cancel();
 
 	CDialogEx::OnClose();
 }
@@ -140,6 +144,8 @@ void CgRPCMFCClientDlg::OnBnClickedButtonRunClient()
 	{
 		_user_RPCClient = nullptr;
 		_channel = nullptr;
+		KillTimer(TIMER_CheckGRPC);
+		_ctsCommon->cancel();
 
 		_btnRunAsyncClient.EnableWindow(TRUE);
 		_btnRunClient.SetWindowTextW(L"启动客户端");
@@ -154,6 +160,9 @@ void CgRPCMFCClientDlg::OnBnClickedButtonRunClient()
 		_btnRunClient.SetWindowTextW(L"关闭客户端");
 		_btnRunAsyncClient.EnableWindow(FALSE);
 		AppendMsg(L"客户端启动");
+
+		// 创建定时器监测连接状态
+		SetTimer(TIMER_CheckGRPC, 2000, nullptr);
 	}
 }
 
@@ -163,6 +172,9 @@ void CgRPCMFCClientDlg::OnBnClickedButtonRunAsyncClient()
 	{
 		_user_AsyncRPCClient->Shutdown();
 		_user_AsyncRPCClient = nullptr;
+		_channel = nullptr;
+		KillTimer(TIMER_CheckGRPC);
+		_ctsCommon->cancel();
 
 		AppendMsg(L"异步客户端已停止");
 		_btnRunClient.EnableWindow(TRUE);
@@ -171,12 +183,16 @@ void CgRPCMFCClientDlg::OnBnClickedButtonRunAsyncClient()
 	else
 	{
 		// 创建异步客户端
-		_user_AsyncRPCClient = make_unique<CAsyncRPCClient>();
-		_user_AsyncRPCClient->Run(this, _serverAddr);
+		_channel = grpc::CreateChannel(_serverAddr, grpc::InsecureChannelCredentials()); // 创建gRPC channel
+		_user_AsyncRPCClient = make_unique<CAsyncRPCClient>(_channel);
+		_user_AsyncRPCClient->Run(this);
 
 		AppendMsg(L"异步客户端启动 0.0.0.0:23351");
 		_btnRunAsyncClient.SetWindowTextW(L"关闭异步客户端");
 		_btnRunClient.EnableWindow(FALSE);
+
+		// 创建定时器监测连接状态
+		SetTimer(TIMER_CheckGRPC, 2000, nullptr);
 	}
 }
 
@@ -417,3 +433,23 @@ void CgRPCMFCClientDlg::OnDeleteUsersComplete()
 	AppendMsg(L"批量删除用户 完成");
 }
 
+void CgRPCMFCClientDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent == TIMER_CheckGRPC)
+	{
+		task<void>([&] {
+			auto token = _ctsCommon->get_token();
+			if (!token.is_canceled() && _channel)
+			{
+				gpr_timespec tm_out{ 1, 0, GPR_TIMESPAN };
+				bool isConnected = _channel->WaitForConnected<gpr_timespec>(tm_out);
+				if (!isConnected)
+				{
+					AppendMsg(L"gRPC未连接");
+				}
+			}			
+		});		
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
+}
