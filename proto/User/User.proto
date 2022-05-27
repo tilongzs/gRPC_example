@@ -2,38 +2,38 @@ syntax = "proto3";
 
 package TestGRPC;
 
-// ç”¨æˆ·ä¿¡æ¯
+// ÓÃ»§ĞÅÏ¢
 message User{
-	string accountName = 1;	// ç”¨æˆ·åï¼ˆè‹±æ–‡ã€æ•°å­—ã€ä¸‹åˆ’çº¿ã€@ï¼‰
-	string accountPWD = 2;	// å¯†ç 
-	string nickName = 3;	// æ˜µç§°
+	string accountName = 1;	// ÓÃ»§Ãû£¨Ó¢ÎÄ¡¢Êı×Ö¡¢ÏÂ»®Ïß¡¢@£©
+	string accountPWD = 2;	// ÃÜÂë
+	string nickName = 3;	// êÇ³Æ
 	uint32 age = 4;
-	Role userRole = 5;  // ç”¨æˆ·è§’è‰²
+	Role userRole = 5;  // ÓÃ»§½ÇÉ«
 }
 
-// è§’è‰²
+// ½ÇÉ«
 enum Role{
     USER    = 0;
     ADMIN   = 1;
 }
 
-// ç”¨æˆ·è§’è‰²
+// ÓÃ»§½ÇÉ«
 message UserRole{
     Role role = 1;
 }
 
-// ç”¨æˆ·å
+// ÓÃ»§Ãû
 message UserAccountName{
-    string accountName = 1;	// ç”¨æˆ·åï¼ˆè‹±æ–‡ã€æ•°å­—ã€ä¸‹åˆ’çº¿ã€@ï¼‰
+    string accountName = 1;	// ÓÃ»§Ãû£¨Ó¢ÎÄ¡¢Êı×Ö¡¢ÏÂ»®Ïß¡¢@£©
 }
 
-// é€šç”¨æ¶ˆæ¯
+// Í¨ÓÃÏûÏ¢
 message CommonMsg{
 	bool isSucess = 1;
 	string msg = 2;
 }
 
-// é€šç”¨æ•°å­—
+// Í¨ÓÃÊı×Ö
 message CommonNumber{
 	uint32 num = 1;
 }

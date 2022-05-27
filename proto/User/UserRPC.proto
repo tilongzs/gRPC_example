@@ -1,19 +1,19 @@
 syntax = "proto3";
 
-import "proto/User/User.proto";
+import "User.proto";
 
 package TestGRPC;
 
 service UserService{
-// æ ¹æ®ç”¨æˆ·åè·å–ç”¨æˆ·ä¿¡æ¯
+// ¸ù¾İÓÃ»§Ãû»ñÈ¡ÓÃ»§ĞÅÏ¢
  rpc GetUser(UserAccountName) returns (User){} 
 
- // è·å–æŒ‡å®šè§’è‰²çš„æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
+ // »ñÈ¡Ö¸¶¨½ÇÉ«µÄËùÓĞÓÃ»§ĞÅÏ¢
  rpc GetUsersByRole(UserRole) returns (stream User){}
 
- // æ‰¹é‡å¢åŠ æ–°ç”¨æˆ·ï¼Œè¿”å›æœåŠ¡å™¨ç”¨æˆ·æ€»æ•°
+ // ÅúÁ¿Ôö¼ÓĞÂÓÃ»§£¬·µ»Ø·şÎñÆ÷ÓÃ»§×ÜÊı
  rpc AddUsers(stream User) returns (CommonNumber){}
 
- // æ‰¹é‡åˆ é™¤ç”¨æˆ·ï¼Œè¿”å›æ¶ˆæ¯
+ // ÅúÁ¿É¾³ıÓÃ»§£¬·µ»ØÏûÏ¢
  rpc DeleteUsers(stream UserAccountName) returns (stream CommonMsg){}
 }
