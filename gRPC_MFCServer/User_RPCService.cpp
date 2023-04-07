@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "User_RPCService.h"
 #include <random>
 #include <chrono>
@@ -10,16 +10,20 @@ using namespace TestGRPC;
 
 static string GetTimeStr()
 {
-	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // »ñÈ¡Ê±¼ä´Á£¨ºÁÃë£©
+	time_t now = time(nullptr);
+	char timeBuf[20] = { 0 };
+	std::strftime(timeBuf, sizeof(timeBuf), "%H:%M:%S", std::localtime(&now));
 
-	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // ×ªÎª¶«°ËÇø±±¾©Ê±¼ä
-	auto mTime = milliseconds(milli);
-	auto tp = time_point<system_clock, milliseconds>(mTime);
-	auto tt = system_clock::to_time_t(tp);
-	tm now;
-	gmtime_s(&now, &tt);
-	char str[60] = { 0 };
-	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
+// 	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // è·å–æ—¶é—´æˆ³ï¼ˆæ¯«ç§’ï¼‰
+// 
+// 	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // è½¬ä¸ºä¸œå…«åŒºåŒ—äº¬æ—¶é—´
+// 	auto mTime = milliseconds(milli);
+// 	auto tp = time_point<system_clock, milliseconds>(mTime);
+// 	auto tt = system_clock::to_time_t(tp);
+// 	tm now;
+// 	gmtime_s(&now, &tt);
+// 	char str[60] = { 0 };
+// 	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
 	return str;
 }
 
@@ -54,7 +58,7 @@ Status CUser_RPCService::GetUsersByRole(ServerContext* context, const UserRole* 
 			if (user.second.userrole() == request->role())
 			{
 				writer->Write(user.second);
-				this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // Ä£ÄâÑÓÊ±·¢ËÍ
+				this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // æ¨¡æ‹Ÿå»¶æ—¶å‘é€
 			}
 		}
 
@@ -75,17 +79,17 @@ Status CUser_RPCService::AddUsers(ServerContext* context, ServerReader< User>* r
 		str << GetTimeStr() << "CUser_RPCService::AddUsers() Read accountName:" << user.accountname()<<endl;
 		OutputDebugStringA(str.str().c_str());
 
-		if (_users.find(user.accountname()) != _users.end()) // ¼ì²éÓÃ»§ÊÇ·ñÒÑ´æÔÚ
+		if (_users.find(user.accountname()) != _users.end()) // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å·²å­˜åœ¨
 		{
-			_users[user.accountname()].CopyFrom(user);	// ¸üĞÂÓÃ»§Êı¾İ
+			_users[user.accountname()].CopyFrom(user);	// æ›´æ–°ç”¨æˆ·æ•°æ®
 		}
 		else
 		{
-			_users.insert(map<string, User>::value_type(user.accountname(), move(user))); // ²åÈëĞÂÓÃ»§
+			_users.insert(map<string, User>::value_type(user.accountname(), move(user))); // æ’å…¥æ–°ç”¨æˆ·
 		}
 	}
 
-	// »Ø¸´
+	// å›å¤
 	response->set_num(_users.size());
 
 	return Status::OK;
@@ -104,31 +108,31 @@ Status CUser_RPCService::DeleteUsers(ServerContext* context, ServerReaderWriter<
 		str << GetTimeStr() << "CUser_RPCService::DeleteUsers() Read:"<<accountName.accountname() << endl;
 		OutputDebugStringA(str.str().c_str());
 
-		if (_users.find(accountName.accountname()) != _users.end()) // ¼ì²éÓÃ»§ÊÇ·ñ´æÔÚ
+		if (_users.find(accountName.accountname()) != _users.end()) // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å­˜åœ¨
 		{
 			ostringstream str;
 			str << GetTimeStr() << "CUser_RPCService::DeleteUsers() Write:"<< accountName.accountname() << endl;
 			OutputDebugStringA(str.str().c_str());
 			
-			// ·şÎñÆ÷É¾³ı¸ÃÓÃ»§Êı¾İ
+			// æœåŠ¡å™¨åˆ é™¤è¯¥ç”¨æˆ·æ•°æ®
 			_users.erase(accountName.accountname());
 
-			/* ¿ÉÑ¡
-				// ´´½¨»Ø¸´Êı¾İ
+			/* å¯é€‰
+				// åˆ›å»ºå›å¤æ•°æ®
 				CommonMsg rp;
 				rp.set_issucess(true);
 
-				// »Ø¸´Ò»´ÎstreamÊı¾İ
+				// å›å¤ä¸€æ¬¡streamæ•°æ®
 				_isWriteDone = false;
 				_requester.Write(rp, this);
 			*/
 		}
 		else
 		{
-			// Ä£ÄâÑÓÊ±·¢ËÍ
+			// æ¨¡æ‹Ÿå»¶æ—¶å‘é€
 			this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator)));
 
-			// ´´½¨»Ø¸´Êı¾İ
+			// åˆ›å»ºå›å¤æ•°æ®
 			CommonMsg rp;
 			rp.set_issucess(false);
 			str.clear();
