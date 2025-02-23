@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "User_RPCClient.h"
 #include <random>
 #include <chrono>
@@ -8,30 +8,21 @@ using namespace std::chrono;
 
 static string GetTimeStr()
 {
-	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // »ñÈ¡Ê±¼ä´Á£¨ºÁÃë£©
-
-	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // ×ªÎª¶«°ËÇø±±¾©Ê±¼ä
-	auto mTime = milliseconds(milli);
-	auto tp = time_point<system_clock, milliseconds>(mTime);
-	auto tt = system_clock::to_time_t(tp);
-	tm now;
-	gmtime_s(&now, &tt);
-	char str[60] = { 0 };
-	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
-	return str;
+	COleDateTime oleTime(time(nullptr));
+	return CStringA(oleTime.Format(L"%H:%M:%S "));
 }
 
 shared_ptr<User> CUser_RPCClient::GetUser(const string& accountName)
 {
-	// ´´½¨ÇëÇóÊı¾İ
+	// åˆ›å»ºè¯·æ±‚æ•°æ®
 	UserAccountName userAccountName;
 	userAccountName.set_accountname(accountName);
 
-	// ´´½¨½ÓÊÕ·şÎñÆ÷·µ»ØµÄ»Ø¸´Êı¾İ
+	// åˆ›å»ºæ¥æ”¶æœåŠ¡å™¨è¿”å›çš„å›å¤æ•°æ®
 	shared_ptr<User> reply = make_shared<User>();
-	ClientContext context;// Ò»´ÎĞÔÊ¹ÓÃ£¬²»ÄÜ×÷Îª³ÉÔ±±äÁ¿ÖØ¸´Ê¹ÓÃ£¬·ñÔò»áµ¼ÖÂÒì³££¡
+	ClientContext context;// ä¸€æ¬¡æ€§ä½¿ç”¨ï¼Œä¸èƒ½ä½œä¸ºæˆå‘˜å˜é‡é‡å¤ä½¿ç”¨ï¼Œå¦åˆ™ä¼šå¯¼è‡´å¼‚å¸¸ï¼
 
-	// ·¢ËÍÇëÇó
+	// å‘é€è¯·æ±‚
 	Status status = _stub->GetUser(&context, userAccountName, reply.get());
 	if (status.ok())
 	{
@@ -45,32 +36,32 @@ shared_ptr<User> CUser_RPCClient::GetUser(const string& accountName)
 
 shared_ptr<vector<User>> CUser_RPCClient::GetUsersByRole(const Role& role)
 {
-	// ´´½¨ÇëÇóÊı¾İ
+	// åˆ›å»ºè¯·æ±‚æ•°æ®
 	UserRole userRole;
 	userRole.set_role(role);
 
-	// ´´½¨½ÓÊÕ·şÎñÆ÷·µ»ØµÄ»Ø¸´Êı¾İ
+	// åˆ›å»ºæ¥æ”¶æœåŠ¡å™¨è¿”å›çš„å›å¤æ•°æ®
 	shared_ptr<vector<User>> users = make_shared<vector<User>>();
 	unique_ptr<User> reply = make_unique<User>();
-	ClientContext context;// Ò»´ÎĞÔÊ¹ÓÃ£¬²»ÄÜ×÷Îª³ÉÔ±±äÁ¿ÖØ¸´Ê¹ÓÃ£¬·ñÔò»áµ¼ÖÂÒì³££¡
+	ClientContext context;// ä¸€æ¬¡æ€§ä½¿ç”¨ï¼Œä¸èƒ½ä½œä¸ºæˆå‘˜å˜é‡é‡å¤ä½¿ç”¨ï¼Œå¦åˆ™ä¼šå¯¼è‡´å¼‚å¸¸ï¼
 
-	// ·¢ËÍÇëÇó
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	// å‘é€è¯·æ±‚
+	auto seed = chrono::system_clock::now().time_since_epoch().count();;
 	default_random_engine generator(seed);
 	uniform_int_distribution<int> delay_distribution(800, 1500);
 	unique_ptr<ClientReader<User>> reader(_stub->GetUsersByRole(&context, userRole));
-	while (reader->Read(reply.get())) // Á¬Ğø¶ÁÈ¡·şÎñÆ÷·µ»ØµÄ»Ø¸´Êı¾İ
+	while (reader->Read(reply.get())) // è¿ç»­è¯»å–æœåŠ¡å™¨è¿”å›çš„å›å¤æ•°æ®
 	{
-		char log[60] = { 0 };
-		sprintf_s(log, "%s CUser_RPCClient::GetUsersByRole() Read\n", GetTimeStr().c_str());
-		OutputDebugStringA(log);
+		ostringstream str;
+		str << GetTimeStr() << "CUser_RPCClient::GetUsersByRole() Read\n";
+		OutputDebugStringA(str.str().c_str());
 
 		User cloneUser;
-		cloneUser.CopyFrom(*reply); // ½«¶ÁÈ¡µ½µÄÒ»´ÎÊı¾İ±£´æ
+		cloneUser.CopyFrom(*reply); // å°†è¯»å–åˆ°çš„ä¸€æ¬¡æ•°æ®ä¿å­˜
 		users->push_back(move(cloneUser));
 	}
 
-	Status status = reader->Finish(); // ËùÓĞÊı¾İ¶ÁÈ¡Íê±Ï
+	Status status = reader->Finish(); // æ‰€æœ‰æ•°æ®è¯»å–å®Œæ¯•
 	if (status.ok())
 	{
 		return users;
@@ -83,35 +74,35 @@ shared_ptr<vector<User>> CUser_RPCClient::GetUsersByRole(const Role& role)
 
 shared_ptr<unsigned> CUser_RPCClient::AddUsers(const shared_ptr<vector<User>>& users)
 {
-	// ½ÓÊÕ·şÎñÆ÷·µ»ØµÄ»Ø¸´Êı¾İ
+	// æ¥æ”¶æœåŠ¡å™¨è¿”å›çš„å›å¤æ•°æ®
 	CommonNumber userCount;
-	ClientContext context;// Ò»´ÎĞÔÊ¹ÓÃ£¬²»ÄÜ×÷Îª³ÉÔ±±äÁ¿ÖØ¸´Ê¹ÓÃ£¬·ñÔò»áµ¼ÖÂÒì³££¡
+	ClientContext context;// ä¸€æ¬¡æ€§ä½¿ç”¨ï¼Œä¸èƒ½ä½œä¸ºæˆå‘˜å˜é‡é‡å¤ä½¿ç”¨ï¼Œå¦åˆ™ä¼šå¯¼è‡´å¼‚å¸¸ï¼
 
-	// ´´½¨ÇëÇóÊı¾İ
+	// åˆ›å»ºè¯·æ±‚æ•°æ®
 	unique_ptr<ClientWriter<User>> writer(_stub->AddUsers(&context, &userCount));
 
-	// ·¢ËÍÇëÇó
+	// å‘é€è¯·æ±‚
 	bool hasError = false;
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	auto seed = chrono::system_clock::now().time_since_epoch().count();
 	default_random_engine generator(seed);
 	uniform_int_distribution<int> delay_distribution(800, 1500);
 	for each (auto& user in *users)
 	{
-		char log[60] = { 0 };
-		sprintf_s(log, "%s CUser_RPCClient::AddUsers() Write\n", GetTimeStr().c_str());
-		OutputDebugStringA(log);
+		ostringstream str;
+		str << GetTimeStr() << "CUser_RPCClient::AddUsers() Write\n";
+		OutputDebugStringA(str.str().c_str());
 
-		if (!writer->Write(user))// Á¬Ğø·¢ËÍ
+		if (!writer->Write(user))// è¿ç»­å‘é€
 		{
 			hasError = true;
 			break;
 		}
 
-		this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // Ä£ÄâÑÓÊ±·¢ËÍ
+		this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // æ¨¡æ‹Ÿå»¶æ—¶å‘é€
 	}
 	writer->WritesDone();
 
-	Status status = writer->Finish(); // ËùÓĞÊı¾İ·¢ËÍÍê±Ï
+	Status status = writer->Finish(); // æ‰€æœ‰æ•°æ®å‘é€å®Œæ¯•
 	if (status.ok() && !hasError)
 	{
 		return make_shared<unsigned>(userCount.num());
@@ -124,13 +115,13 @@ shared_ptr<unsigned> CUser_RPCClient::AddUsers(const shared_ptr<vector<User>>& u
 
 void CUser_RPCClient::DeleteUsers(shared_ptr<vector<UserAccountName>> accountNames)
 {
-	// ´´½¨¶ÁĞ´Æ÷
+	// åˆ›å»ºè¯»å†™å™¨
 	ClientContext context;
 	auto stream = _stub->DeleteUsers(&context);
 
-	// ·¢ËÍÇëÇó
+	// å‘é€è¯·æ±‚
 	bool hasError = false;
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	auto seed = chrono::system_clock::now().time_since_epoch().count();
 	default_random_engine generator(seed);
 	uniform_int_distribution<int> delay_distribution(800, 1500);
 	for each (auto & accountName in *accountNames)
@@ -139,17 +130,17 @@ void CUser_RPCClient::DeleteUsers(shared_ptr<vector<UserAccountName>> accountNam
 		str << GetTimeStr() << "CUser_RPCClient::DeleteUsers() Write:" << accountName.accountname() << endl;
 		OutputDebugStringA(str.str().c_str());
 
-		if (!stream->Write(accountName))// Á¬Ğø·¢ËÍ
+		if (!stream->Write(accountName))// è¿ç»­å‘é€
 		{
 			hasError = true;
 			break;
 		}
 
-		this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // ²âÊÔÑÓÊ±·¢ËÍ
+		this_thread::sleep_for(chrono::milliseconds(delay_distribution(generator))); // æµ‹è¯•å»¶æ—¶å‘é€
 	}
-	stream->WritesDone(); // ËùÓĞÊı¾İ·¢ËÍÍê±Ï
+	stream->WritesDone(); // æ‰€æœ‰æ•°æ®å‘é€å®Œæ¯•
 
-	// ¶ÁÈ¡»Ø¸´
+	// è¯»å–å›å¤
 	shared_ptr<vector<UserAccountName>> deletedUserAccountName = make_shared<vector<UserAccountName>>();
 	CommonMsg reply;
 	while (stream->Read(&reply))

@@ -10,21 +10,8 @@ using namespace TestGRPC;
 
 static string GetTimeStr()
 {
-	time_t now = time(nullptr);
-	char timeBuf[20] = { 0 };
-	std::strftime(timeBuf, sizeof(timeBuf), "%H:%M:%S", std::localtime(&now));
-
-// 	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // 获取时间戳（毫秒）
-// 
-// 	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // 转为东八区北京时间
-// 	auto mTime = milliseconds(milli);
-// 	auto tp = time_point<system_clock, milliseconds>(mTime);
-// 	auto tt = system_clock::to_time_t(tp);
-// 	tm now;
-// 	gmtime_s(&now, &tt);
-// 	char str[60] = { 0 };
-// 	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
-	return str;
+	COleDateTime oleTime(time(nullptr));
+	return CStringA(oleTime.Format(L"%H:%M:%S "));
 }
 
 Status CUser_RPCService::GetUser(ServerContext* context, const UserAccountName* request, User* response)
@@ -45,15 +32,15 @@ Status CUser_RPCService::GetUsersByRole(ServerContext* context, const UserRole* 
 {
 	if (!_users.empty())
 	{
-		unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+		auto seed = chrono::system_clock::now().time_since_epoch().count();;
 		default_random_engine generator(seed);
 		uniform_int_distribution<int> delay_distribution(800, 1500);
 
 		for each (auto user in _users)
 		{
-			char log[60] = { 0 };
-			sprintf_s(log, "%s CUser_RPCService::GetAllUser() Write\n", GetTimeStr().c_str());
-			OutputDebugStringA(log);
+			ostringstream str;
+			str << GetTimeStr() << "CUser_RPCService::GetAllUser() Write\n";
+			OutputDebugStringA(str.str().c_str());
 
 			if (user.second.userrole() == request->role())
 			{
@@ -97,7 +84,7 @@ Status CUser_RPCService::AddUsers(ServerContext* context, ServerReader< User>* r
 
 Status CUser_RPCService::DeleteUsers(ServerContext* context, ServerReaderWriter<CommonMsg, UserAccountName>* stream)
 {
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	auto seed = chrono::system_clock::now().time_since_epoch().count();;
 	default_random_engine generator(seed);
 	uniform_int_distribution<int> delay_distribution(800, 1500);
 

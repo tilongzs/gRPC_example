@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "User_RPCAsyncClient.h"
 #include "gRPC_MFCClientDlg.h"
 #include <chrono>
@@ -9,17 +9,8 @@ using namespace std::chrono;
 
 static string GetTimeStr()
 {
-	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // »ñÈ¡Ê±¼ä´Á£¨ºÁÃë£©
-
-	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // ×ªÎª¶«°ËÇø±±¾©Ê±¼ä
-	auto mTime = milliseconds(milli);
-	auto tp = time_point<system_clock, milliseconds>(mTime);
-	auto tt = system_clock::to_time_t(tp);
-	tm now;
-	gmtime_s(&now, &tt);
-	char str[60] = { 0 };
-	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
-	return str;
+	COleDateTime oleTime(time(nullptr));
+	return CStringA(oleTime.Format(L"%H:%M:%S "));
 }
 
 void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg)
@@ -41,7 +32,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg)
 		return str;
 	};
 
-	// ´´½¨´øSSLÈÏÖ¤µÄgRPC channel
+	// åˆ›å»ºå¸¦SSLè®¤è¯çš„gRPC channel
 	grpc::SslCredentialsOptions sslOpts;
 	sslOpts.pem_root_certs = GetFileString("ssl/server.crt");
 	sslOpts.pem_private_key = GetFileString("ssl/client.key");
@@ -62,7 +53,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg)
 		auto token = _ctsCommon->get_token();
 		while (!token.is_canceled())
 		{
-			if (!_cq.Next(&tag, &ok)) // ×èÈû£¬Ö±ÖÁÓĞĞÂµÄÊÂ¼ş
+			if (!_cq.Next(&tag, &ok)) // é˜»å¡ï¼Œç›´è‡³æœ‰æ–°çš„äº‹ä»¶
 			{
 				str.clear();
 				str << GetTimeStr() << "CAsyncRPCClient::Run() Next() failed" << endl;
@@ -70,7 +61,7 @@ void CAsyncRPCClient::Run(CgRPCMFCClientDlg* mainDlg)
 				break;
 			}
 
-			// ´¦ÀíÊÂ¼ş
+			// å¤„ç†äº‹ä»¶
 			static_cast<CAsyncRPCRequester*>(tag)->Proceed(ok);
 		}
 
@@ -132,22 +123,22 @@ void CAsyncRPC_GetUser::Proceed(bool isOK /*= true*/)
 	{
 		if (_status.ok())
 		{
-			// ½ÓÊÕÍê³É
+			// æ¥æ”¶å®Œæˆ
 			_mainDlg->OnGetUser(make_shared<User>(move(_reply)));
 		}
 		else
 		{
-			// ½ÓÊÕÍê³É£¬µ«·şÎñÆ÷·µ»ØÁËÖ´ĞĞÊ§°ÜÏûÏ¢
+			// æ¥æ”¶å®Œæˆï¼Œä½†æœåŠ¡å™¨è¿”å›äº†æ‰§è¡Œå¤±è´¥æ¶ˆæ¯
 			_mainDlg->OnGetUser(nullptr);
 		}
 	}
 	else if (_isFirstCalled)
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	else
 	{
-		// ½ÓÊÕ¹ı³ÌÖĞ·¢ËÍ´íÎó
+		// æ¥æ”¶è¿‡ç¨‹ä¸­å‘é€é”™è¯¯
 		_mainDlg->OnGetUser(nullptr);
 	}
 
@@ -171,7 +162,7 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 		{
 			if (_status.ok())
 			{
-				// µÚÒ»´ÎµÈ´ıÊı¾İ
+				// ç¬¬ä¸€æ¬¡ç­‰å¾…æ•°æ®
 				if (_isFirstCalled)
 				{
 					_isFirstCalled = false;
@@ -179,16 +170,16 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 				}
 				else
 				{
-					// ´¦Àí½ÓÊÕµ½µÄÒ»´ÎstreamÊı¾İ
+					// å¤„ç†æ¥æ”¶åˆ°çš„ä¸€æ¬¡streamæ•°æ®
 					_mainDlg->OnGetUsersByRole(make_shared<User>(move(_reply)));
 
-					// ¼ÌĞøµÈ´ıÊı¾İ
+					// ç»§ç»­ç­‰å¾…æ•°æ®
 					_responsder->Read(&_reply, this);
 				}
 			}
 			else
 			{
-				// ½ÓÊÕÍê³É£¬µ«·şÎñÆ÷·µ»ØÁËÖ´ĞĞÊ§°ÜÏûÏ¢
+				// æ¥æ”¶å®Œæˆï¼Œä½†æœåŠ¡å™¨è¿”å›äº†æ‰§è¡Œå¤±è´¥æ¶ˆæ¯
 				ostringstream str;
 				str << GetTimeStr() << "CAsyncRPC_GetUsersByRole::Proceed() failed:" << _status.error_message() << endl;
 				OutputDebugStringA(str.str().c_str());
@@ -201,11 +192,11 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 		}
 		else if (_isFirstCalled)
 		{
-			delete this; // Ó¦´ğ½áÊø
+			delete this; // åº”ç­”ç»“æŸ
 		}
 		else
 		{
-			// ½ÓÊÕÍê³É
+			// æ¥æ”¶å®Œæˆ
 			_callStatus = CallStatus::FINISH;
 			_responsder->Finish(&_status, this);
 
@@ -215,7 +206,7 @@ void CAsyncRPC_GetUsersByRole::Proceed(bool isOK)
 	break;
 	case CallStatus::FINISH:
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	break;
 	default:
@@ -245,17 +236,17 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 				auto iter = _request->begin();
 				for (int i = 0; i != _tag; ++i)
 				{
-					++iter; // ¸ù¾İ±ê¼Çµ÷ÕûÊı¾İÖ¸Õë
+					++iter; // æ ¹æ®æ ‡è®°è°ƒæ•´æ•°æ®æŒ‡é’ˆ
 				}
 
 				if (iter != _request->end())
 				{
-					_tag++; // ±ê¼Çµ±Ç°·¢ËÍ½ø¶È
+					_tag++; // æ ‡è®°å½“å‰å‘é€è¿›åº¦
 					_responsder->Write(*iter, this);
 				}
 				else
 				{
-					// ·¢ËÍÍê³É
+					// å‘é€å®Œæˆ
 					_isSendComplete = true;
 					_responsder->WritesDone(this);
 				}
@@ -268,20 +259,20 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 			}
 			else
 			{
-				// ½áÊø·¢ËÍ
+				// ç»“æŸå‘é€
 				_callStatus = CallStatus::FINISH;
 				_responsder->Finish(&_status, this);
 			}
 		}
 		else if (_isFirstCalled)
 		{
-			delete this; // Ó¦´ğ½áÊø
+			delete this; // åº”ç­”ç»“æŸ
 		}
 		else
 		{
 			_mainDlg->OnAddUsersComplete(false);
 
-			// ½áÊø·¢ËÍ
+			// ç»“æŸå‘é€
 			_callStatus = CallStatus::FINISH;
 			_responsder->Finish(&_status, this);
 		}		
@@ -289,10 +280,10 @@ void CAsyncRPC_AddUsers::Proceed(bool isOK /*= true*/)
 		break;
 	case CallStatus::FINISH:
 	{
-		// ´¦ÀíÊÕµ½µÄ»Ø¸´Êı¾İ
+		// å¤„ç†æ”¶åˆ°çš„å›å¤æ•°æ®
 		_mainDlg->OnAddUsersComplete(true, _reply.num());
 
-		// Ó¦´ğ½áÊø
+		// åº”ç­”ç»“æŸ
 		delete this;
 	}
 		break;
@@ -318,14 +309,14 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 	{
 		if (isOK)
 		{
-			// µÚÒ»´Î·¢ËÍÊı¾İ
+			// ç¬¬ä¸€æ¬¡å‘é€æ•°æ®
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
 
-				// ·¢ËÍÒ»´ÎstreamÊı¾İ
+				// å‘é€ä¸€æ¬¡streamæ•°æ®
 				auto iter = _request->begin();
-				_tag++; // ±ê¼Çµ±Ç°·¢ËÍ½ø¶È
+				_tag++; // æ ‡è®°å½“å‰å‘é€è¿›åº¦
 				_isWriteDone = false;
 				_responsder->Write(*iter, this);
 			}
@@ -333,33 +324,33 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 			{
 				if (_isWriteDone)
 				{
-					// ´¦Àí½ÓÊÕµ½µÄÒ»´ÎstreamÊı¾İ
+					// å¤„ç†æ¥æ”¶åˆ°çš„ä¸€æ¬¡streamæ•°æ®
 					_mainDlg->OnDeleteUsers(_reply.issucess(), make_shared<string>(_reply.msg()));
 
-					// ·¢ËÍÇëÇóÊı¾İ
+					// å‘é€è¯·æ±‚æ•°æ®
 					auto iter = _request->begin();
 					for (int i = 0; i != _tag; ++i)
 					{
-						++iter; // ¸ù¾İ±ê¼Çµ÷ÕûÊı¾İÖ¸Õë
+						++iter; // æ ¹æ®æ ‡è®°è°ƒæ•´æ•°æ®æŒ‡é’ˆ
 					}
 
 					if (iter != _request->end())
 					{
-						_tag++; // ±ê¼Çµ±Ç°·¢ËÍ½ø¶È
+						_tag++; // æ ‡è®°å½“å‰å‘é€è¿›åº¦
 						_isWriteDone = false;
-						_responsder->Write(*iter, this);// ·¢ËÍÒ»´ÎstreamÊı¾İ
+						_responsder->Write(*iter, this);// å‘é€ä¸€æ¬¡streamæ•°æ®
 					}
 					else
 					{
-						// È«²¿ÇëÇó·¢ËÍÍê³É
+						// å…¨éƒ¨è¯·æ±‚å‘é€å®Œæˆ
 						_isSendComplete = true;
 						_isWriteDone = false;
-						_responsder->WritesDone(this); // ½áÊø·¢ËÍ
+						_responsder->WritesDone(this); // ç»“æŸå‘é€
 					}
 				}
 				else
 				{
-					// ¼ÌĞøµÈ´ıÊı¾İ
+					// ç»§ç»­ç­‰å¾…æ•°æ®
 					_isWriteDone = true;
 					_responsder->Read(&_reply, this);
 				}
@@ -367,7 +358,7 @@ void CAsyncRPC_DeleteUsers::Proceed(bool isOK)
 		}
 		else if (_isFirstCalled)
 		{
-			delete this; // Ó¦´ğ½áÊø
+			delete this; // åº”ç­”ç»“æŸ
 		}
 		else
 		{

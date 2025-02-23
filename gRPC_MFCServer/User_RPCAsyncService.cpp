@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "User_RPCAsyncService.h"
 #include <grpcpp/server_builder.h>
 #include <grpcpp/health_check_service_interface.h>
@@ -11,17 +11,8 @@ using namespace chrono;
 
 static string GetTimeStr()
 {
-	uint64_t timestamp(duration_cast<milliseconds>(chrono::system_clock::now().time_since_epoch()).count()); // »ñÈ¡Ê±¼ä´Á£¨ºÁÃë£©
-
-	uint64_t milli = timestamp + 8 * 60 * 60 * 1000; // ×ªÎª¶«°ËÇø±±¾©Ê±¼ä
-	auto mTime = milliseconds(milli);
-	auto tp = time_point<system_clock, milliseconds>(mTime);
-	auto tt = system_clock::to_time_t(tp);
-	tm now;
-	gmtime_s(&now, &tt);
-	char str[60] = { 0 };
-	sprintf_s(str, "%02d:%02d:%02d.%03d ", now.tm_hour, now.tm_min, now.tm_sec, int(timestamp % 1000));
-	return str;
+	COleDateTime oleTime(time(nullptr));
+	return CStringA(oleTime.Format(L"%H:%M:%S "));
 }
 
 CAsyncRPCService::CAsyncRPCService()
@@ -34,7 +25,7 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 {
 	if (_builder)
 	{
-		// ·ÀÖ¹ÖØ¸´ÔËĞĞ
+		// é˜²æ­¢é‡å¤è¿è¡Œ
 		return;
 	}
 
@@ -55,7 +46,7 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 		return str;
 	};
 
-	// ¼àÌıSSLÈÏÖ¤µÄÁ¬½Ó
+	// ç›‘å¬SSLè®¤è¯çš„è¿æ¥
 	grpc::SslServerCredentialsOptions sslOpts{};
 	sslOpts.client_certificate_request = GRPC_SSL_REQUEST_AND_REQUIRE_CLIENT_CERTIFICATE_AND_VERIFY;
 	sslOpts.pem_key_cert_pairs.push_back(grpc::SslServerCredentialsOptions::PemKeyCertPair{ GetFileString("ssl/server.key"), GetFileString("ssl/server.crt") });
@@ -64,33 +55,33 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 	_builder->AddListeningPort(serverAddr, creds);
 	*/
 
-	// ¼àÌı²»ĞèÒªÈÏÖ¤µÄÁ¬½Ó
+	// ç›‘å¬ä¸éœ€è¦è®¤è¯çš„è¿æ¥
 	_builder->AddListeningPort(serverAddr, grpc::InsecureServerCredentials());
 
-	// ×¢²á·şÎñ
+	// æ³¨å†ŒæœåŠ¡
 	_asyncUserService = make_unique<UserService::AsyncService>();
 	_builder->RegisterService(_asyncUserService.get());
 
 	while (threadCount)
 	{
-		// Ìí¼Ó¶ÓÁĞ£¨±ØĞëÔÚBuildAndStartÖ®Ç°£©
+		// æ·»åŠ é˜Ÿåˆ—ï¼ˆå¿…é¡»åœ¨BuildAndStartä¹‹å‰ï¼‰
 		ServerCompletionQueue* cqNotification = _builder->AddCompletionQueue().release();
 		_vecSCQ.push_back(cqNotification);
 
 		threadCount--;
 	}
 
-	// Æô¶¯·şÎñ
+	// å¯åŠ¨æœåŠ¡
 	_rpcServer = _builder->BuildAndStart();
 
-	// ·şÎñÔËĞĞ
+	// æœåŠ¡è¿è¡Œ
 	auto token = _ctsCommon->get_token();
 	for each (auto scq in _vecSCQ)
 	{
 // 		CompletionQueue* cqNewCall = new CompletionQueue;
 // 		_vecCQNewCall.push_back(cqNewCall);
 
-		// ´´½¨Ó¦´ğÆ÷¶ÔÏó
+		// åˆ›å»ºåº”ç­”å™¨å¯¹è±¡
 		new CAsyncRPCResponder_GetUser(_asyncUserService.get(), scq, scq, this);
 		new CAsyncRPCResponder_GetUsersByRole(_asyncUserService.get(), scq, scq, this);
 		new CAsyncRPCResponder_AddUsers(_asyncUserService.get(), scq, scq, this);
@@ -103,9 +94,9 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 			bool ok = false;
 			while (!token.is_canceled())
 			{
-				if (!scq->Next(&tag, &ok)) // ×èÈû£¬Ö±ÖÁÓĞĞÂµÄÊÂ¼ş
+				if (!scq->Next(&tag, &ok)) // é˜»å¡ï¼Œç›´è‡³æœ‰æ–°çš„äº‹ä»¶
 				{
-					// ³öÏÖ´íÎó£¬·şÎñÍ£Ö¹
+					// å‡ºç°é”™è¯¯ï¼ŒæœåŠ¡åœæ­¢
 					str.clear();
 					str << GetTimeStr() << "CUser_RPCAsyncService::RunServer()taskProceed:: Next() failed" << endl;
 					OutputDebugStringA(str.str().c_str());
@@ -113,7 +104,7 @@ void CAsyncRPCService::Run(string serverAddr, int threadCount /*= 1*/)
 					break;
 				}
 
-				// ´¦ÀíÊÂ¼ş
+				// å¤„ç†äº‹ä»¶
 				static_cast<CAsyncRPCResponder*>(tag)->OnNotification(ok);
 			}
 
@@ -165,14 +156,14 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 	{
 		if (isOK)
 		{
-			// ´´½¨ĞÂµÄÓ¦´ğÆ÷¶ÔÏó
+			// åˆ›å»ºæ–°çš„åº”ç­”å™¨å¯¹è±¡
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
 				new CAsyncRPCResponder_GetUser(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
-			// ´¦ÀíÊı¾İ
+			// å¤„ç†æ•°æ®
 			_callStatus = CallStatus::FINISH;
 
 			auto& users = _dataService->GetUsers();
@@ -181,12 +172,12 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 			{
 				user.CopyFrom(users[_rqUserAccountName.accountname()]);
 
-				// »Ø¸´
+				// å›å¤
 				_responder.Finish(user, Status::OK, this);
 			}
 			else
 			{
-				// »Ø¸´
+				// å›å¤
 				_responder.Finish(user, Status(NOT_FOUND, "accountname not found"), this);
 			}
 		}
@@ -202,7 +193,7 @@ void CAsyncRPCResponder_GetUser::OnNotification(bool isOK)
 	break;
 	case CallStatus::FINISH:
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	break;
 	default:
@@ -225,31 +216,31 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 	{
 		if (isOK)
 		{
-			// ´´½¨ĞÂµÄÓ¦´ğÆ÷¶ÔÏó
+			// åˆ›å»ºæ–°çš„åº”ç­”å™¨å¯¹è±¡
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
 				new CAsyncRPCResponder_GetUsersByRole(_svcUser, _cqNewCall, _scqNotification, _dataService);
 			}
 
-			// ´¦ÀíÊı¾İ
+			// å¤„ç†æ•°æ®
 			auto& users = _dataService->GetUsers();
 			if (!users.empty())
 			{
 				auto iter = users.begin();
 				for (int i = 0; i != _tag; ++i)
 				{
-					++iter; // ¸ù¾İ±ê¼Çµ÷ÕûÊı¾İÖ¸Õë
+					++iter; // æ ¹æ®æ ‡è®°è°ƒæ•´æ•°æ®æŒ‡é’ˆ
 				}
 
 				while (true)
 				{
 					if (iter != users.end())
 					{
-						_tag++; // ±ê¼Çµ±Ç°·¢ËÍ½ø¶È
+						_tag++; // æ ‡è®°å½“å‰å‘é€è¿›åº¦
 						if (iter->second.userrole() == _rqUserRole.role())
 						{
-							// »Ø¸´Ò»´ÎstreamÊı¾İ
+							// å›å¤ä¸€æ¬¡streamæ•°æ®
 							_responder.Write(iter->second, this);
 							break;
 						}
@@ -260,7 +251,7 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 					}
 					else
 					{
-						// È«²¿»Ø¸´Íê³É
+						// å…¨éƒ¨å›å¤å®Œæˆ
 						_callStatus = CallStatus::FINISH;
 						_responder.Finish(Status::OK, this);
 						break;
@@ -269,7 +260,7 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 			}
 			else
 			{
-				// È«²¿»Ø¸´Íê³É
+				// å…¨éƒ¨å›å¤å®Œæˆ
 				_callStatus = CallStatus::FINISH;
 				_responder.Finish(Status(NOT_FOUND, "not found"), this);
 			}
@@ -287,7 +278,7 @@ void CAsyncRPCResponder_GetUsersByRole::OnNotification(bool isOK)
 		break;
 	case CallStatus::FINISH:
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	break;
 	default:
@@ -310,51 +301,51 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 	{
 		if (isOK)
 		{
-			// ´´½¨ĞÂµÄÓ¦´ğÆ÷¶ÔÏó
+			// åˆ›å»ºæ–°çš„åº”ç­”å™¨å¯¹è±¡
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
 				new CAsyncRPCResponder_AddUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
 
-				// µÚÒ»´ÎµÈ´ıÊı¾İ
-				_requester.Read(&_tmpUser, this); // ½«¿Í»§¶ËµÄÇëÇóÊı¾İ´æÈë³ÉÔ±±äÁ¿_tmpUserÖĞ£¬²»ÄÜÊ¹ÓÃÁÙÊ±±äÁ¿£¡
+				// ç¬¬ä¸€æ¬¡ç­‰å¾…æ•°æ®
+				_requester.Read(&_tmpUser, this); // å°†å®¢æˆ·ç«¯çš„è¯·æ±‚æ•°æ®å­˜å…¥æˆå‘˜å˜é‡_tmpUserä¸­ï¼Œä¸èƒ½ä½¿ç”¨ä¸´æ—¶å˜é‡ï¼
 			}
 			else
 			{
-				// ´¦Àí½ÓÊÕµ½µÄÒ»´ÎstreamÊı¾İ
+				// å¤„ç†æ¥æ”¶åˆ°çš„ä¸€æ¬¡streamæ•°æ®
 				auto& users = _dataService->GetUsers();
 
 				string accountName = _tmpUser.accountname();
-				if (users.find(accountName) != users.end()) // ¼ì²éÓÃ»§ÊÇ·ñÒÑ´æÔÚ
+				if (users.find(accountName) != users.end()) // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å·²å­˜åœ¨
 				{
-					users[accountName].CopyFrom(_tmpUser);	// ¸üĞÂÓÃ»§Êı¾İ
+					users[accountName].CopyFrom(_tmpUser);	// æ›´æ–°ç”¨æˆ·æ•°æ®
 
 					ostringstream str;
-					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::¸üĞÂÓÃ»§³É¹¦£º" << accountName.c_str() << endl;
+					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::æ›´æ–°ç”¨æˆ·æˆåŠŸï¼š" << accountName.c_str() << endl;
 					OutputDebugStringA(str.str().c_str());
 				}
 				else
 				{
-					users.insert(map<string, User>::value_type(accountName, move(_tmpUser))); // ²åÈëĞÂÓÃ»§
+					users.insert(map<string, User>::value_type(accountName, move(_tmpUser))); // æ’å…¥æ–°ç”¨æˆ·
 
 					ostringstream str;
-					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::Ôö¼ÓĞÂÓÃ»§³É¹¦£º" << accountName.c_str() << endl;
+					str << GetTimeStr() << "CAsyncRPCResponder_AddUsers::å¢åŠ æ–°ç”¨æˆ·æˆåŠŸï¼š" << accountName.c_str() << endl;
 					OutputDebugStringA(str.str().c_str());
 				}
 
-				// ¼ÌĞøµÈ´ıÊı¾İ
-				_requester.Read(&_tmpUser, this); // ½«¿Í»§¶ËµÄÇëÇóÊı¾İ´æÈë³ÉÔ±±äÁ¿_tmpUserÖĞ£¬²»ÄÜÊ¹ÓÃÁÙÊ±±äÁ¿£¡
+				// ç»§ç»­ç­‰å¾…æ•°æ®
+				_requester.Read(&_tmpUser, this); // å°†å®¢æˆ·ç«¯çš„è¯·æ±‚æ•°æ®å­˜å…¥æˆå‘˜å˜é‡_tmpUserä¸­ï¼Œä¸èƒ½ä½¿ç”¨ä¸´æ—¶å˜é‡ï¼
 			}
 		}
 		else if (_isFirstCalled)
 		{
-			delete this; // Ó¦´ğ½áÊø
+			delete this; // åº”ç­”ç»“æŸ
 		}
 		else
 		{
 			_callStatus = CallStatus::FINISH;
 
-			// »Ø¸´
+			// å›å¤
 			auto& users = _dataService->GetUsers();
 			CommonNumber userCount;
 			userCount.set_num(users.size());
@@ -364,7 +355,7 @@ void CAsyncRPCResponder_AddUsers::OnNotification(bool isOK)
 		break;
 	case CallStatus::FINISH:
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	break;
 	default:
@@ -385,17 +376,17 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 	{
 	case CallStatus::PROCESS:
 	{
-		// ¿ªÊ¼¶ÁÈ¡
+		// å¼€å§‹è¯»å–
 		if (isOK)
 		{
-			// ´´½¨ĞÂµÄÓ¦´ğÆ÷¶ÔÏó
+			// åˆ›å»ºæ–°çš„åº”ç­”å™¨å¯¹è±¡
 			if (_isFirstCalled)
 			{
 				_isFirstCalled = false;
 				new CAsyncRPCResponder_DeleteUsers(_svcUser, _cqNewCall, _scqNotification, _dataService);
 
-				// µÚÒ»´ÎµÈ´ıÊı¾İ
-				_requester.Read(&_rqAccountName, this); // ´æÈëÁÙÊ±³ÉÔ±±äÁ¿tmpAccountNameÖĞ£¬²»ÄÜÊ¹ÓÃÁÙÊ±±äÁ¿£¡
+				// ç¬¬ä¸€æ¬¡ç­‰å¾…æ•°æ®
+				_requester.Read(&_rqAccountName, this); // å­˜å…¥ä¸´æ—¶æˆå‘˜å˜é‡tmpAccountNameä¸­ï¼Œä¸èƒ½ä½¿ç”¨ä¸´æ—¶å˜é‡ï¼
 			}
 			else
 			{
@@ -405,48 +396,48 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 					str << GetTimeStr() << "CAsyncRPCResponder_DeleteUsers:: read:" << _rqAccountName.accountname() << endl;
 					OutputDebugStringA(str.str().c_str());
 
-					// ´¦Àí½ÓÊÕµ½µÄÒ»´ÎstreamÊı¾İ¡£±ØĞë»Ø¸´£¬·ñÔò¿Í»§¶Ë½«²»¼ÌĞø·¢ËÍÊı¾İ£¡
+					// å¤„ç†æ¥æ”¶åˆ°çš„ä¸€æ¬¡streamæ•°æ®ã€‚å¿…é¡»å›å¤ï¼Œå¦åˆ™å®¢æˆ·ç«¯å°†ä¸ç»§ç»­å‘é€æ•°æ®ï¼
 					auto& users = _dataService->GetUsers();
-					if (users.find(_rqAccountName.accountname()) != users.end()) // ¼ì²éÓÃ»§ÊÇ·ñ´æÔÚ
+					if (users.find(_rqAccountName.accountname()) != users.end()) // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å­˜åœ¨
 					{
 						users.erase(_rqAccountName.accountname());
 
-						// ´´½¨»Ø¸´Êı¾İ
+						// åˆ›å»ºå›å¤æ•°æ®
 						CommonMsg rp;
 						rp.set_issucess(true);
 						ostringstream str;
 						str << "DeleteUsers:" << _rqAccountName.accountname() << endl;
 						rp.set_msg(str.str());
 
-						// »Ø¸´Ò»´ÎstreamÊı¾İ
+						// å›å¤ä¸€æ¬¡streamæ•°æ®
 						_isWriteDone = false;
 						_requester.Write(rp, this);						
 					}
 					else
 					{
-						// ´´½¨»Ø¸´Êı¾İ
+						// åˆ›å»ºå›å¤æ•°æ®
 						CommonMsg rp;
 						rp.set_issucess(false);
 						ostringstream str;
 						str << "DeleteUsers:not found " << _rqAccountName.accountname() << endl;
 						rp.set_msg(str.str());
 
-						// »Ø¸´Ò»´ÎstreamÊı¾İ
+						// å›å¤ä¸€æ¬¡streamæ•°æ®
 						_isWriteDone = false;
 						_requester.Write(rp, this);
 					}
 				}
 				else
 				{
-					// ¼ÌĞøµÈ´ıÊı¾İ
+					// ç»§ç»­ç­‰å¾…æ•°æ®
 					_isWriteDone = true;
-					_requester.Read(&_rqAccountName, this); // ´æÈëÁÙÊ±³ÉÔ±±äÁ¿tmpAccountNameÖĞ£¬²»ÄÜÊ¹ÓÃÁÙÊ±±äÁ¿£¡
+					_requester.Read(&_rqAccountName, this); // å­˜å…¥ä¸´æ—¶æˆå‘˜å˜é‡tmpAccountNameä¸­ï¼Œä¸èƒ½ä½¿ç”¨ä¸´æ—¶å˜é‡ï¼
 				}
 			}
 		}
 		else if (_isFirstCalled)
 		{
-			delete this; // Ó¦´ğ½áÊø
+			delete this; // åº”ç­”ç»“æŸ
 		}
 		else
 		{
@@ -457,7 +448,7 @@ void CAsyncRPCResponder_DeleteUsers::OnNotification(bool isOK /*= true*/)
 		break;
 	case CallStatus::FINISH:
 	{
-		delete this; // Ó¦´ğ½áÊø
+		delete this; // åº”ç­”ç»“æŸ
 	}
 	break;
 	default:

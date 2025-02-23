@@ -28,7 +28,6 @@ void CgRPCMFCServerDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CgRPCMFCServerDlg, CDialogEx)
-	ON_WM_PAINT()
 	ON_MESSAGE(WMSG_FUNCTION, &CgRPCMFCServerDlg::OnFunction)
 	ON_BN_CLICKED(IDC_BUTTON_RUN_SERVER, &CgRPCMFCServerDlg::OnBnClickedButtonRunServer)
 	ON_BN_CLICKED(IDC_BUTTON_RUN_ASYNC_SERVER, &CgRPCMFCServerDlg::OnBnClickedButtonRunAsyncServer)
@@ -42,29 +41,6 @@ BOOL CgRPCMFCServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);	
 
 	return TRUE; 
-}
-
-void CgRPCMFCServerDlg::OnPaint()
-{
-	if (IsIconic())
-	{
-		CPaintDC dc(this);
-
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		dc.DrawIcon(x, y, m_hIcon);
-	}
-	else
-	{
-		CDialogEx::OnPaint();
-	}
 }
 
 void CgRPCMFCServerDlg::AppendMsg(const WCHAR* msg)
@@ -116,15 +92,15 @@ void CgRPCMFCServerDlg::OnBnClickedButtonRunServer()
 	if (_rpcServer)
 	{
 		// 停止RPC服务
+		AppendMsg(L"手动停止服务");
 		_rpcServer->Shutdown();
 
 		_btnRunAsyncServer.EnableWindow(TRUE);
 		_btnRunServer.SetWindowTextW(L"启动服务");
-		AppendMsg(L"服务停止");
 	}
 	else
 	{
-		task<void> taskRunRPCServer([&]() {
+		std::thread([&]() {
 			grpc::EnableDefaultHealthCheckService(true);
 			grpc::reflection::InitProtoReflectionServerBuilderPlugin();
 
@@ -144,23 +120,22 @@ void CgRPCMFCServerDlg::OnBnClickedButtonRunServer()
 
 			_rpcServer = nullptr;
 			AppendMsg(L"服务已停止");
-		});
+		}).detach();
 
 		_btnRunServer.SetWindowTextW(L"关闭服务");
 		_btnRunAsyncServer.EnableWindow(FALSE);
 	}
 }
 
-
 void CgRPCMFCServerDlg::OnBnClickedButtonRunAsyncServer()
 {
 	if (_asyncRPCServer)
 	{
 		// 停止异步服务
+		AppendMsg(L"手动停止异步服务");
 		_asyncRPCServer->Shutdown();
 		_asyncRPCServer = nullptr;
 
-		AppendMsg(L"异步服务已停止");
 		_btnRunServer.EnableWindow(TRUE);
 		_btnRunAsyncServer.SetWindowTextW(L"启动异步服务");
 	}

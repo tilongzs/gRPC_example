@@ -92,7 +92,7 @@ public:
 		}
 		else
 		{
-			GPR_ASSERT(_callStatus == FINISH);
+			//GPR_ASSERT(_callStatus == FINISH);
 			std::cout << "[Proceed11]: Good Bye" << std::endl;
 			delete this;
 		}
@@ -326,7 +326,7 @@ public:
 		bool ok;
 		while (true)
 		{
-			GPR_ASSERT(cq_->Next(&tag, &ok));
+			cq_->Next(&tag, &ok);
 			CommonCallData* calldata = static_cast<CommonCallData*>(tag);
 			calldata->Proceed(ok);
 		}

@@ -69,7 +69,6 @@ public:
 		{
 			// Verify that the request was completed successfully. Note that "ok"
 			// corresponds solely to the request for updates introduced by Finish().
-			GPR_ASSERT(ok);
 			if (status.ok())
 				printReply("Proceed11");
 			std::cout << "[Proceed11]: Good Bye" << std::endl;

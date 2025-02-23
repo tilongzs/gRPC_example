@@ -4,14 +4,13 @@
 #include <functional>
 #include <string>
 #include <memory>
-#include <ppltasks.h>
 
 #include <grpcpp/server_builder.h>
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 
-using namespace Concurrency;
-using namespace std;
+using std::string;
+using std::unique_ptr;
 using namespace grpc;
 
 class CgRPCMFCServerDlg : public CDialogEx
@@ -39,15 +38,13 @@ protected:
 	CButton _btnRunAsyncServer;
 
 	string _serverAddr = "0.0.0.0:23351";
-	unique_ptr<Server> _rpcServer = nullptr;
+	unique_ptr<Server> _rpcServer = nullptr;	// 同步模式服务
 	unique_ptr<CAsyncRPCService> _asyncRPCServer = nullptr;
-	unique_ptr<cancellation_token_source> _ctsCommon = make_unique<cancellation_token_source>();
 
 	virtual BOOL OnInitDialog();
-	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
-
+	// 打印日志
 	void AppendMsg(const WCHAR* msg);
 	LRESULT OnFunction(WPARAM wParam, LPARAM lParam);
 public:
