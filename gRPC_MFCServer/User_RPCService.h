@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <map>
 using namespace std;
 
@@ -7,16 +7,16 @@ using namespace std;
 class CUser_RPCService : public ::TestGRPC::UserService::Service
 {
 protected:
-	// ¸ù¾İÓÃ»§Ãû»ñÈ¡ÓÃ»§ĞÅÏ¢
+	// æ ¹æ®ç”¨æˆ·åè·å–ç”¨æˆ·ä¿¡æ¯
 	virtual ::grpc::Status GetUser(::grpc::ServerContext* context, const ::TestGRPC::UserAccountName* request, ::TestGRPC::User* response);
-	// »ñÈ¡ËùÓĞÓÃ»§ĞÅÏ¢
+	// è·å–æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
 	virtual ::grpc::Status GetUsersByRole(::grpc::ServerContext* context, const ::TestGRPC::UserRole* request, ::grpc::ServerWriter< ::TestGRPC::User>* writer);
-	// ÅúÁ¿Ôö¼ÓĞÂÓÃ»§£¬·µ»Ø·şÎñÆ÷Éú³ÉµÄĞÂÓÃ»§Éí·İĞÅÏ¢
+	// æ‰¹é‡å¢åŠ æ–°ç”¨æˆ·ï¼Œè¿”å›æœåŠ¡å™¨ç”Ÿæˆçš„æ–°ç”¨æˆ·èº«ä»½ä¿¡æ¯
 	virtual ::grpc::Status AddUsers(::grpc::ServerContext* context, ::grpc::ServerReader< ::TestGRPC::User>* reader, ::TestGRPC::CommonNumber* response);
-	// ÅúÁ¿É¾³ıÓÃ»§£¬·µ»ØÉ¾³ı³É¹¦µÄÓÃ»§Ãû
+	// æ‰¹é‡åˆ é™¤ç”¨æˆ·ï¼Œè¿”å›åˆ é™¤æˆåŠŸçš„ç”¨æˆ·å
 	virtual ::grpc::Status DeleteUsers(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::TestGRPC::CommonMsg, ::TestGRPC::UserAccountName>* stream);
 
 private:
-	map<string/*username*/, ::TestGRPC::User> _users;	// ËùÓĞÓÃ»§ĞÅÏ¢
+	map<string/*accountName*/, ::TestGRPC::User> _users;	// æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
 };
 

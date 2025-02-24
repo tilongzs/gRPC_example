@@ -5,15 +5,15 @@ import "User.proto";
 package TestGRPC;
 
 service UserService{
-// ¸ù¾İÓÃ»§Ãû»ñÈ¡ÓÃ»§ĞÅÏ¢
+// æ ¹æ®ç”¨æˆ·åè·å–ç”¨æˆ·ä¿¡æ¯
  rpc GetUser(UserAccountName) returns (User){} 
 
- // »ñÈ¡Ö¸¶¨½ÇÉ«µÄËùÓĞÓÃ»§ĞÅÏ¢
+ // è·å–æŒ‡å®šè§’è‰²çš„æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
  rpc GetUsersByRole(UserRole) returns (stream User){}
 
- // ÅúÁ¿Ôö¼ÓĞÂÓÃ»§£¬·µ»Ø·şÎñÆ÷ÓÃ»§×ÜÊı
+ // æ‰¹é‡å¢åŠ æ–°ç”¨æˆ·ï¼Œè¿”å›æœåŠ¡å™¨ç”¨æˆ·æ€»æ•°
  rpc AddUsers(stream User) returns (CommonNumber){}
 
- // ÅúÁ¿É¾³ıÓÃ»§£¬·µ»ØÏûÏ¢
+ // æ‰¹é‡åˆ é™¤ç”¨æˆ·ï¼Œè¿”å›æ¶ˆæ¯
  rpc DeleteUsers(stream UserAccountName) returns (stream CommonMsg){}
 }

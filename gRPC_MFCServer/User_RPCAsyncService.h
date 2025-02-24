@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <map>
 #include <grpcpp/grpcpp.h>
 #include <ppltasks.h>
@@ -11,8 +11,8 @@ using namespace grpc;
 using grpc::Server;
 using grpc::ServerCompletionQueue;
 
-/* CAsyncRPCService Òì²½RPC·şÎñ
-	°üº¬Æô¶¯¡¢Í£Ö¹·şÎñ£¬ÒÔ¼°ÑİÊ¾Êı¾İ
+/* CAsyncRPCService å¼‚æ­¥RPCæœåŠ¡
+	åŒ…å«å¯åŠ¨ã€åœæ­¢æœåŠ¡ï¼Œä»¥åŠæ¼”ç¤ºæ•°æ®
 */
 class CAsyncRPCService
 {
@@ -27,21 +27,21 @@ private:
 	vector<ServerCompletionQueue*> _vecSCQ;
 	vector<CompletionQueue*> _vecCQNewCall;
 
-	// Êı¾İ
-	map<string/*username*/, ::TestGRPC::User> _users;	// ËùÓĞÓÃ»§ĞÅÏ¢
+	// æ•°æ®
+	map<string/*accountName*/, ::TestGRPC::User> _users;	// æ‰€æœ‰ç”¨æˆ·ä¿¡æ¯
 public:
 	void Run(string serverAddr, int threadCount = 1);
 	void Shutdown();
 
-	map<string/*username*/, ::TestGRPC::User>& GetUsers() { return _users; }
+	map<string/*accountName*/, ::TestGRPC::User>& GetUsers() { return _users; }
 };
 
-/* CAsyncRPCResponder Òì²½RPCÓ¦´ğÆ÷»ùÀà
+/* CAsyncRPCResponder å¼‚æ­¥RPCåº”ç­”å™¨åŸºç±»
 */
 class CAsyncRPCResponder 
 {
 public:
-	// µ±Ç°ÔËĞĞ×´Ì¬
+	// å½“å‰è¿è¡ŒçŠ¶æ€
 	enum class CallStatus { PROCESS, FINISH };
 
 	CAsyncRPCResponder(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* scqNotification, CAsyncRPCService* dataService)
@@ -50,9 +50,9 @@ public:
 
 protected:
 
-	CallStatus _callStatus = CallStatus::PROCESS;	// µ±Ç°ÔËĞĞ×´Ì¬
-	CAsyncRPCService*		_dataService;	// Êı¾İÔ´
-	bool		_isFirstCalled = true;	// ÊÇ·ñµÚÒ»´Î±»µ÷ÓÃ
+	CallStatus _callStatus = CallStatus::PROCESS;	// å½“å‰è¿è¡ŒçŠ¶æ€
+	CAsyncRPCService*		_dataService;	// æ•°æ®æº
+	bool		_isFirstCalled = true;	// æ˜¯å¦ç¬¬ä¸€æ¬¡è¢«è°ƒç”¨
 
 	UserService::AsyncService*	_svcUser;
 
@@ -64,7 +64,7 @@ public:
 	virtual void OnNotification(bool isOK = true) = 0;
 };
 
-// UserService::GetUser Ò»¶ÔÒ»
+// UserService::GetUser ä¸€å¯¹ä¸€
 class CAsyncRPCResponder_GetUser : public CAsyncRPCResponder
 {
 public:
@@ -78,7 +78,7 @@ public:
 	virtual void OnNotification(bool isOK = true);
 };
 
-// UserService::GetUsersByRole  Ò»¶Ô¶à
+// UserService::GetUsersByRole  ä¸€å¯¹å¤š
 class CAsyncRPCResponder_GetUsersByRole : public CAsyncRPCResponder
 {
 public:
@@ -87,13 +87,13 @@ public:
 private:
 	UserRole						_rqUserRole;
 	ServerAsyncWriter<User>			_responder;
-	int								_tag = 0;	// Êı¾İ½ø¶È±êÇ©
+	int								_tag = 0;	// æ•°æ®è¿›åº¦æ ‡ç­¾
 
 public:
 	virtual void OnNotification(bool isOK = true);
 };
 
-// UserService::AddUsers ¶à¶ÔÒ»
+// UserService::AddUsers å¤šå¯¹ä¸€
 class CAsyncRPCResponder_AddUsers : public CAsyncRPCResponder
 {
 public:
@@ -107,15 +107,15 @@ public:
 	virtual void OnNotification(bool isOK = true);
 };
 
-// UserService::DeleteUsers ¶à¶Ô¶à
+// UserService::DeleteUsers å¤šå¯¹å¤š
 class CAsyncRPCResponder_DeleteUsers : public CAsyncRPCResponder
 {
 public:
 	CAsyncRPCResponder_DeleteUsers(UserService::AsyncService* service, CompletionQueue* cqNewCall, ServerCompletionQueue* cqNotification, CAsyncRPCService* dataService);
 
 private:
-	bool	_isWriteDone = true;	// µ±Ç°Îª¶ÁÄ£Ê½
-	int		_tag = 0;	// Êı¾İ½ø¶È±êÇ©
+	bool	_isWriteDone = true;	// å½“å‰ä¸ºè¯»æ¨¡å¼
+	int		_tag = 0;	// æ•°æ®è¿›åº¦æ ‡ç­¾
 	UserAccountName _rqAccountName;
 	ServerAsyncReaderWriter<CommonMsg, UserAccountName> _requester;
 
