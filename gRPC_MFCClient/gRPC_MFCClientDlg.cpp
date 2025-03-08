@@ -447,7 +447,7 @@ void CgRPCMFCClientDlg::OnTimer(UINT_PTR nIDEvent)
 				{
 					AppendMsg(L"gRPC未连接");
 				}
-			}			
+			}
 		});		
 	}
 
